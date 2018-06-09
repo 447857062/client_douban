@@ -5,6 +5,8 @@ import android.text.TextUtils;
 
 import java.util.List;
 
+import deplink.com.douya.network.api.info.apiv2.User;
+import deplink.com.douya.network.api.info.apiv2.UserList;
 import deplink.com.douya.network.api.info.frodo.Broadcast;
 import deplink.com.douya.network.api.info.frodo.BroadcastLikerList;
 import deplink.com.douya.network.api.info.frodo.BroadcastList;
@@ -28,9 +30,9 @@ import deplink.com.douya.network.api.info.frodo.ReviewList;
 import deplink.com.douya.network.api.info.frodo.TimelineList;
 import deplink.com.douya.network.api.info.frodo.UploadedImage;
 import deplink.com.douya.network.api.info.frodo.UserItemList;
-import deplink.com.douya.network.api.info.frodo.UserList;
 import deplink.com.douya.util.StringUtils;
 import okhttp3.MultipartBody;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -50,8 +52,15 @@ public class ApiService {
     private static final ApiService sInstance = new ApiService();
 
     private FrodoService mFrodoService;
+    private LifeStreamService mLifeStreamService;
     public static ApiService getInstance() {
         return sInstance;
+    }
+    public ApiRequest<User> getUser(String userIdOrUid) {
+        if (TextUtils.isEmpty(userIdOrUid)) {
+            userIdOrUid = "~me";
+        }
+        return mLifeStreamService.getUser(userIdOrUid);
     }
     public ApiRequest<Void> deleteBroadcastComment(long broadcastId, long commentId) {
         return mFrodoService.deleteBroadcastComment(broadcastId, commentId);
@@ -92,6 +101,88 @@ public class ApiService {
        /* return mFrodoService.getTimelineList(url, untilId, count, lastVisitedId, topic, guestOnly ?
                 1 : null);*/
        return null;
+    }
+    public interface LifeStreamService {
+
+        @GET("lifestream/user/{userIdOrUid}")
+        ApiRequest<User> getUser(@Path("userIdOrUid") String userIdOrUid);
+
+        @POST("lifestream/user/{userIdOrUid}/follow")
+        ApiRequest<User> follow(@Path("userIdOrUid") String userIdOrUid);
+
+        @DELETE("lifestream/user/{userIdOrUid}/follow")
+        ApiRequest<User> unfollow(@Path("userIdOrUid") String userIdOrUid);
+
+        @GET("lifestream/user/{userIdOrUid}/followings")
+        ApiRequest<UserList> getFollowingList(
+                @Path("userIdOrUid") String userIdOrUid, @Query("start") Integer start,
+                @Query("count") Integer count, @Query("tag") String tag);
+
+        @GET("lifestream/user/{userIdOrUid}/followers")
+        ApiRequest<UserList> getFollowerList(
+                @Path("userIdOrUid") String userIdOrUid, @Query("start") Integer start,
+                @Query("count") Integer count);
+
+        @POST("lifestream/statuses")
+        @FormUrlEncoded
+        ApiRequest<deplink.com.douya.network.api.info.apiv2.Broadcast> sendBroadcast(
+                @Field("text") String text, @Field("image_urls") String imageUrls,
+                @Field("rec_title") String linkTitle, @Field("rec_url") String linkUrl);
+
+        @GET
+        ApiRequest<List<deplink.com.douya.network.api.info.apiv2.Broadcast>>
+        getBroadcastList(@Url String url, @Query("until_id") Long untilId,
+                         @Query("count") Integer count, @Query("q") String topic);
+
+        @GET("lifestream/status/{broadcastId}")
+        ApiRequest<deplink.com.douya.network.api.info.apiv2.Broadcast> getBroadcast(
+                @Path("broadcastId") long broadcastId);
+
+        @GET("lifestream/status/{broadcastId}/comments")
+        ApiRequest<deplink.com.douya.network.api.info.apiv2.CommentList>
+        getBroadcastCommentList(@Path("broadcastId") long broadcastId,
+                                @Query("start") Integer start,
+                                @Query("count") Integer count);
+
+        @POST("lifestream/status/{broadcastId}/like")
+        ApiRequest<deplink.com.douya.network.api.info.apiv2.Broadcast> likeBroadcast(
+                @Path("broadcastId") long broadcastId);
+
+        @DELETE("lifestream/status/{broadcastId}/like")
+        ApiRequest<deplink.com.douya.network.api.info.apiv2.Broadcast> unlikeBroadcast(
+                @Path("broadcastId") long broadcastId);
+
+        @POST("lifestream/status/{broadcastId}/reshare")
+        ApiRequest<deplink.com.douya.network.api.info.apiv2.Broadcast> rebroadcastBroadcast(
+                @Path("broadcastId") long broadcastId);
+
+        @DELETE("lifestream/status/{broadcastId}/reshare")
+        ApiRequest<deplink.com.douya.network.api.info.apiv2.Broadcast>
+        unrebroadcastBroadcast(@Path("broadcastId") long broadcastId);
+
+        @GET("lifestream/status/{broadcastId}/likers")
+        ApiRequest<List<deplink.com.douya.network.api.info.apiv2.SimpleUser>>
+        getBroadcastLikerList(@Path("broadcastId") long broadcastId,
+                              @Query("start") Integer start, @Query("count") Integer count);
+
+        @GET("lifestream/status/{broadcastId}/resharers")
+        ApiRequest<List<deplink.com.douya.network.api.info.apiv2.SimpleUser>>
+        getBroadcastRebroadcasterList(@Path("broadcastId") long broadcastId,
+                                      @Query("start") Integer start,
+                                      @Query("count") Integer count);
+
+        @DELETE("lifestream/status/{broadcastId}/comment/{commentId}")
+        ApiRequest<Boolean> deleteBroadcastComment(@Path("broadcastId") long broadcastId,
+                                                   @Path("commentId") long commentId);
+
+        @POST("lifestream/status/{broadcastId}/comments")
+        @FormUrlEncoded
+        ApiRequest<deplink.com.douya.network.api.info.apiv2.Comment> sendBroadcastComment(
+                @Path("broadcastId") long broadcastId, @Field("text") String comment);
+
+        @DELETE("lifestream/status/{broadcastId}")
+        ApiRequest<deplink.com.douya.network.api.info.apiv2.Broadcast> deleteBroadcast(
+                @Path("broadcastId") long broadcastId);
     }
 
     public interface FrodoService {

@@ -2,11 +2,17 @@ package deplink.com.douya.user.content;
 
 import android.os.Bundle;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import deplink.com.douya.content.ResourceFragment;
 import deplink.com.douya.eventbus.EventBusUtils;
 import deplink.com.douya.eventbus.UserUpdatedEvent;
+import deplink.com.douya.eventbus.UserWriteFinishedEvent;
+import deplink.com.douya.eventbus.UserWriteStartedEvent;
 import deplink.com.douya.network.api.ApiError;
 import deplink.com.douya.network.api.ApiRequest;
+import deplink.com.douya.network.api.ApiService;
 import deplink.com.douya.network.api.info.apiv2.SimpleUser;
 import deplink.com.douya.network.api.info.apiv2.User;
 import deplink.com.douya.util.FragmentUtils;
@@ -98,11 +104,19 @@ public class UserResource extends ResourceFragment<User, User> {
             mUserIdOrUid = user.getIdOrUid();
         }
     }
+
     @Override
     protected ApiRequest<User> onCreateRequest() {
-        return null;
+        return ApiService.getInstance().getUser(mUserIdOrUid);
     }
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (has()) {
+            User user = get();
+            setArguments(user.getIdOrUid(), user, user);
+        }
+    }
     @Override
     protected void onLoadStarted() {
         getListener().onLoadUserStarted(getRequestCode());
@@ -122,16 +136,46 @@ public class UserResource extends ResourceFragment<User, User> {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (has()) {
-            User user = get();
-            setArguments(user.getIdOrUid(), user, user);
+    protected void onLoadSuccess(User user) {}
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    public void onUserUpdated(UserUpdatedEvent event) {
+
+        if (event.isFromMyself(this)) {
+            return;
+        }
+
+        if (event.mUser.isIdOrUid(mUserIdOrUid)) {
+            set(event.mUser);
+            getListener().onUserChanged(getRequestCode(), get());
         }
     }
 
-    protected void onLoadSuccess(User user) {}
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    public void onUserWriteStarted(UserWriteStartedEvent event) {
+
+        if (event.isFromMyself(this)) {
+            return;
+        }
+
+        // Only call listener when we have the data.
+        if (mExtraUser != null && mExtraUser.isIdOrUid(event.userIdOrUid)) {
+            getListener().onUserWriteStarted(getRequestCode());
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    public void onUserWriteFinished(UserWriteFinishedEvent event) {
+
+        if (event.isFromMyself(this)) {
+            return;
+        }
+
+        // Only call listener when we have the data.
+        if (mExtraUser != null && mExtraUser.isIdOrUid(event.userIdOrUid)) {
+            getListener().onUserWriteFinished(getRequestCode());
+        }
+    }
+
 
     private Listener getListener() {
         return (Listener) getTarget();
