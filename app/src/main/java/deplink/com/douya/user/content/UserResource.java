@@ -1,6 +1,8 @@
 package deplink.com.douya.user.content;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -39,6 +41,22 @@ public class UserResource extends ResourceFragment<User, User> {
         //noinspection deprecation
         return new UserResource().setArguments(userIdOrUid, simpleUser, user);
     }
+    public static UserResource attachTo(String userIdOrUid, SimpleUser simpleUser, User user,
+                                        Fragment fragment) {
+        return attachTo(userIdOrUid, simpleUser, user, fragment, FRAGMENT_TAG_DEFAULT,
+                REQUEST_CODE_INVALID);
+    }
+    public static UserResource attachTo(String userIdOrUid, SimpleUser simpleUser, User user,
+                                        Fragment fragment, String tag, int requestCode) {
+        FragmentActivity activity = fragment.getActivity();
+        UserResource instance = FragmentUtils.findByTag(activity, tag);
+        if (instance == null) {
+            instance = newInstance(userIdOrUid, simpleUser, user);
+            FragmentUtils.add(instance, activity, tag);
+        }
+        instance.setTarget(fragment, requestCode);
+        return instance;
+    }
     /**
      * @deprecated Use {@code attachTo()} instead.
      */
@@ -62,20 +80,7 @@ public class UserResource extends ResourceFragment<User, User> {
         return mSimpleUser;
     }
 
-    public boolean hasSimpleUser() {
-        return getSimpleUser() != null;
-    }
 
-    @Override
-    public User get() {
-        User user = super.get();
-        if (user == null) {
-            // Can be called before onCreate() is called.
-            ensureArguments();
-            user = mExtraUser;
-        }
-        return user;
-    }
     private void ensureArguments() {
         if (mUserIdOrUid != null) {
             return;
@@ -94,6 +99,20 @@ public class UserResource extends ResourceFragment<User, User> {
             }
         }
     }
+    public boolean hasSimpleUser() {
+        return getSimpleUser() != null;
+    }
+
+    @Override
+    public User get() {
+        User user = super.get();
+        if (user == null) {
+            // Can be called before onCreate() is called.
+            ensureArguments();
+            user = mExtraUser;
+        }
+        return user;
+    }
     @Override
     protected void set(User user) {
         super.set(user);
@@ -104,7 +123,12 @@ public class UserResource extends ResourceFragment<User, User> {
             mUserIdOrUid = user.getIdOrUid();
         }
     }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
+        ensureArguments();
+    }
     @Override
     protected ApiRequest<User> onCreateRequest() {
         return ApiService.getInstance().getUser(mUserIdOrUid);
