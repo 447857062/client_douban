@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="deplink.com.douya.broadcast.ui.BroadcastActivity">
+    tools:context="deplink.com.douya.douya.broadcast.ui.BroadcastActivity">
 
 </android.support.constraint.ConstraintLayout>

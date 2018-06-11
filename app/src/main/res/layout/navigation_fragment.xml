@@ -4,7 +4,7 @@
   ~ All Rights Reserved.
   -->
 
-<deplink.com.douya.ui.FullscreenNavigationView
+<douya.ui.FullscreenNavigationView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/navigation"

@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:clipChildren="false">
 
-            <deplink.com.douya.ui.SimpleCircleImageView
+            <douya.ui.SimpleCircleImageView
                 android:id="@+id/fade_out_recent_one_avatar"
                 android:layout_width="@dimen/touch_target_size"
                 android:layout_height="@dimen/touch_target_size"
@@ -37,7 +37,7 @@
                 android:layout_alignTop="@id/recent_one_avatar"
                 android:padding="@dimen/avatar_padding" />
 
-            <deplink.com.douya.ui.SimpleCircleImageView
+            <douya.ui.SimpleCircleImageView
                 android:id="@+id/recent_one_avatar"
                 android:layout_width="@dimen/touch_target_size"
                 android:layout_height="@dimen/touch_target_size"
@@ -47,7 +47,7 @@
                 android:layout_marginTop="@dimen/screen_edge_horizontal_margin_with_4dp_padding"
                 android:padding="@dimen/avatar_padding" />
 
-            <deplink.com.douya.ui.SimpleCircleImageView
+            <douya.ui.SimpleCircleImageView
                 android:id="@+id/fade_out_recent_two_avatar"
                 android:layout_width="@dimen/touch_target_size"
                 android:layout_height="@dimen/touch_target_size"
@@ -56,7 +56,7 @@
                 android:padding="@dimen/avatar_padding"
                 android:visibility="invisible" />
 
-            <deplink.com.douya.ui.SimpleCircleImageView
+            <douya.ui.SimpleCircleImageView
                 android:id="@+id/recent_two_avatar"
                 android:layout_width="@dimen/touch_target_size"
                 android:layout_height="@dimen/touch_target_size"
@@ -65,7 +65,7 @@
                 android:layout_marginTop="@dimen/screen_edge_horizontal_margin_with_4dp_padding"
                 android:padding="@dimen/avatar_padding" />
 
-            <deplink.com.douya.ui.SimpleCircleImageView
+            <douya.ui.SimpleCircleImageView
                 android:id="@+id/fade_out_avatar"
                 android:layout_width="@dimen/navigation_header_avatar_size"
                 android:layout_height="@dimen/navigation_header_avatar_size"
@@ -73,7 +73,7 @@
                 android:layout_alignTop="@id/avatar"
                 android:visibility="invisible" />
 
-            <deplink.com.douya.ui.SimpleCircleImageView
+            <douya.ui.SimpleCircleImageView
                 android:id="@+id/avatar"
                 android:layout_width="@dimen/navigation_header_avatar_size"
                 android:layout_height="@dimen/navigation_header_avatar_size"

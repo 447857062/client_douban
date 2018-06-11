@@ -21,7 +21,7 @@
         app:tint="@drawable/card_icon_button_tint"
         tools:ignore="MissingPrefix" />
 
-    <deplink.com.douya.ui.AutoGoneTextView
+    <douya.ui.AutoGoneTextView
         android:id="@+id/cardiconbutton_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

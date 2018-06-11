@@ -18,7 +18,7 @@
         android:paddingLeft="@dimen/card_content_horizontal_margin_with_4dp_padding"
         android:paddingRight="@dimen/card_content_horizontal_margin">
 
-        <deplink.com.douya.ui.SimpleCircleImageView
+        <douya.ui.SimpleCircleImageView
             android:id="@+id/broadcastlayout_avatar"
             android:layout_width="@dimen/touch_target_size"
             android:layout_height="@dimen/touch_target_size"
@@ -39,7 +39,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textStyle="bold" />
 
-        <deplink.com.douya.ui.TimeTextView
+        <douya.ui.TimeTextView
             android:id="@+id/broadcastlayout_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
             android:textColor="?android:textColorSecondary" />
     </RelativeLayout>
 
-    <deplink.com.douya.ui.AutoGoneTextView
+    <douya.ui.AutoGoneTextView
         android:id="@+id/broadcastlayout_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
         android:orientation="vertical"
         android:foreground="?selectableItemBackground">
 
-        <deplink.com.douya.ui.ForegroundRelativeLayout
+        <douya.ui.ForegroundRelativeLayout
             android:id="@+id/broadcastlayout_rebroadcasted_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -107,7 +107,7 @@
                 android:layout_marginBottom="@dimen/card_content_vertical_space"
                 android:background="?dividerHorizontal" />
 
-            <deplink.com.douya.ui.AutoGoneTextView
+            <douya.ui.AutoGoneTextView
                 android:id="@+id/broadcastlayout_rebroadcasted_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -118,7 +118,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textStyle="bold" />
 
-            <deplink.com.douya.ui.AutoGoneTextView
+            <douya.ui.AutoGoneTextView
                 android:id="@+id/broadcastlayout_rebroadcasted_action"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -130,7 +130,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="?android:textColorSecondary" />
 
-            <deplink.com.douya.ui.AutoGoneTextView
+            <douya.ui.AutoGoneTextView
                 android:id="@+id/broadcastlayout_rebroadcasted_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -148,9 +148,9 @@
                 android:text="@string/broadcast_rebroadcasted_broadcast_deleted"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="?android:textColorSecondary" />
-        </deplink.com.douya.ui.ForegroundRelativeLayout>
+        </douya.ui.ForegroundRelativeLayout>
 
-        <deplink.com.douya.ui.ForegroundRelativeLayout
+        <douya.ui.ForegroundRelativeLayout
             android:id="@+id/broadcastlayout_attachment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -184,7 +184,7 @@
                 android:layout_below="@id/broadcastlayout_divider"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
-            <deplink.com.douya.ui.AutoGoneTextView
+            <douya.ui.AutoGoneTextView
                 android:id="@+id/broadcastlayout_attachment_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -192,9 +192,9 @@
                 android:layout_below="@id/broadcastlayout_attachment_title"
                 android:layout_marginTop="8dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-        </deplink.com.douya.ui.ForegroundRelativeLayout>
+        </douya.ui.ForegroundRelativeLayout>
 
-        <deplink.com.douya.ui.ImageLayout
+        <douya.ui.ImageLayout
             android:id="@+id/broadcastlayout_single_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -208,7 +208,7 @@
             android:layout_height="wrap_content"
             android:theme="?darkTheme">
 
-            <deplink.com.douya.ui.NestedRatioHeightRecyclerView
+            <douya.ui.NestedRatioHeightRecyclerView
                 android:id="@+id/broadcastlayout_image_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -250,7 +250,7 @@
         android:paddingRight="@dimen/card_content_horizontal_margin"
         android:orientation="horizontal">
 
-        <deplink.com.douya.ui.CardIconButton
+        <douya.ui.CardIconButton
             android:id="@+id/broadcastlayout_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -262,7 +262,7 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <deplink.com.douya.ui.CardIconButton
+        <douya.ui.CardIconButton
             android:id="@+id/broadcastlayout_comment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -270,7 +270,7 @@
             android:contentDescription="@string/broadcast_comment"
             android:src="@drawable/comment_icon_white_18dp" />
 
-        <deplink.com.douya.ui.CardIconButton
+        <douya.ui.CardIconButton
             android:id="@+id/broadcastlayout_rebroadcast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

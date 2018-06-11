@@ -12,7 +12,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <deplink.com.douya.ui.AutoGoneTextView
+    <douya.ui.AutoGoneTextView
         android:id="@+id/rebroadcasted_by"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="?android:textColorTertiary" />
 
-    <deplink.com.douya.ui.FriendlyCardView
+    <douya.ui.FriendlyCardView
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,9 +39,9 @@
         app:cardCornerRadius="@dimen/card_corner_radius"
         app:cardMaxElevation="@dimen/card_elevation">
 
-        <deplink.com.douya.broadcast.ui.BroadcastLayout
+        <douya.broadcast.ui.BroadcastLayout
             android:id="@+id/broadcast"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-    </deplink.com.douya.ui.FriendlyCardView>
+    </douya.ui.FriendlyCardView>
 </LinearLayout>
