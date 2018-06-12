@@ -7,6 +7,8 @@ package douya.util;
 
 import android.content.Context;
 
+import com.douya.R;
+
 import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
@@ -21,7 +23,6 @@ import org.threeten.bp.format.ResolverStyle;
 import org.threeten.bp.format.SignStyle;
 import org.threeten.bp.temporal.ChronoField;
 
-import deplink.com.douya.R;
 import douya.ui.TimeTextView;
 
 

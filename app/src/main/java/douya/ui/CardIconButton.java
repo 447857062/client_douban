@@ -16,9 +16,10 @@ import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.douya.R;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import deplink.com.douya.R;
 import douya.util.ViewUtils;
 
 public class CardIconButton extends GetOnLongClickListenerLinearLayout {

@@ -5,7 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import deplink.com.douya.R;
+import com.douya.R;
+
 import douya.network.api.info.apiv2.SimpleUser;
 import douya.network.api.info.frodo.User;
 

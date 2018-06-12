@@ -10,11 +10,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
+import com.douya.R;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-import deplink.com.douya.R;
 
 
 public class Rating implements Parcelable {

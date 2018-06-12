@@ -13,9 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.douya.R;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import deplink.com.douya.R;
 import douya.network.api.info.frodo.Broadcast;
 import douya.ui.SimpleAdapter;
 import douya.util.ViewUtils;

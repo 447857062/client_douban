@@ -11,9 +11,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.douya.R;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import deplink.com.douya.R;
+import douya.account.util.AccountUtils;
 import douya.doumail.ui.DoumailUnreadCountFragment;
 import douya.home.HomeFragment;
 import douya.link.NotImplementedManager;
@@ -54,15 +56,13 @@ public class MainActivity extends AppCompatActivity  implements NavigationFragme
         super.onCreate(savedInstanceState);
         setTheme(R.style.Theme_Douya_MainActivity);
         TransitionUtils.setupTransitionBeforeDecorate(this);
-/*
-
         if (!AccountUtils.ensureActiveAccountAvailability(this)) {
             return;
         }
         if (savedInstanceState != null) {
             mOpenedDoumail = savedInstanceState.getBoolean(STATE_OPENED_DOUMAIL);
         }
-*/
+
 
         setContentView(R.layout.activity_main);
         TransitionUtils.setupTransitionAfterSetContentView(this);
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationFragme
 
         outState.putBoolean(STATE_OPENED_DOUMAIL, mOpenedDoumail);
     }
-    @Override
+   @Override
     protected void onStart() {
         super.onStart();
 
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationFragme
 
         getMenuInflater().inflate(R.menu.main, menu);
         mNotificationMenuItem = menu.findItem(R.id.action_notification);
-       ActionItemBadge.setup(mNotificationMenuItem, R.drawable.notifications_icon_white_24dp,
+     ActionItemBadge.setup(mNotificationMenuItem, R.drawable.notifications_icon_white_24dp,
                 mNotificationListFragment.getUnreadCount(), this);
         mDoumailMenuItem = menu.findItem(R.id.action_doumail);
          ActionItemBadge.setup(mDoumailMenuItem, R.drawable.mail_icon_white_24dp,

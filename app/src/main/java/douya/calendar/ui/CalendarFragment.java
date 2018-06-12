@@ -19,9 +19,10 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.douya.R;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import deplink.com.douya.R;
 import douya.calendar.info.CalendarDay;
 import douya.link.UriHandler;
 import douya.util.ImageUtils;

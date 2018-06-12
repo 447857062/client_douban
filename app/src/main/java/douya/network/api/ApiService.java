@@ -1,18 +1,27 @@
 package douya.network.api;
 
-import android.media.Rating;
+import android.content.Context;
+import android.net.Uri;
 import android.text.TextUtils;
+
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import java.util.List;
 
+import douya.account.info.AccountContract;
+import douya.network.GsonResponseBodyConverterFactory;
+import douya.network.Http;
+import douya.network.api.credential.ApiCredential;
+import douya.network.api.info.AuthenticationResponse;
+import douya.network.api.info.apiv2.SimpleUser;
 import douya.network.api.info.apiv2.User;
-import douya.network.api.info.apiv2.UserList;
 import douya.network.api.info.frodo.Broadcast;
 import douya.network.api.info.frodo.BroadcastLikerList;
 import douya.network.api.info.frodo.BroadcastList;
 import douya.network.api.info.frodo.CelebrityList;
 import douya.network.api.info.frodo.CollectableItem;
 import douya.network.api.info.frodo.Comment;
+import douya.network.api.info.frodo.CommentList;
 import douya.network.api.info.frodo.CompleteCollectableItem;
 import douya.network.api.info.frodo.DiaryList;
 import douya.network.api.info.frodo.DoulistList;
@@ -21,21 +30,31 @@ import douya.network.api.info.frodo.DoumailThreadList;
 import douya.network.api.info.frodo.ItemAwardList;
 import douya.network.api.info.frodo.ItemCollection;
 import douya.network.api.info.frodo.ItemCollectionList;
+import douya.network.api.info.frodo.ItemCollectionState;
 import douya.network.api.info.frodo.ItemForumTopicList;
 import douya.network.api.info.frodo.NotificationCount;
 import douya.network.api.info.frodo.NotificationList;
 import douya.network.api.info.frodo.PhotoList;
+import douya.network.api.info.frodo.Rating;
 import douya.network.api.info.frodo.ReviewList;
 import douya.network.api.info.frodo.TimelineList;
 import douya.network.api.info.frodo.UploadedImage;
 import douya.network.api.info.frodo.UserItemList;
+import douya.network.api.info.frodo.UserList;
+import douya.util.CollectionUtils;
+import douya.util.StringCompat;
 import douya.util.StringUtils;
-import douya.network.api.info.apiv2.SimpleUser;
+import douya.util.UriUtils;
+import okhttp3.Interceptor;
 import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import retrofit2.Retrofit;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -51,17 +70,236 @@ public class ApiService {
 
     private static final ApiService sInstance = new ApiService();
 
-    private FrodoService mFrodoService;
+    private FrodoAuthenticationService mFrodoAuthenticationService;
+    private ApiV2AuthenticationService mApiV2AuthenticationService;
+
+    private OkHttpClient mLifeStreamHttpClient;
     private LifeStreamService mLifeStreamService;
+    private OkHttpClient mFrodoHttpClient;
+    private FrodoService mFrodoService;
+
     public static ApiService getInstance() {
         return sInstance;
     }
+    public ApiRequest<ItemCollection> collectItem(CollectableItem.Type itemType, long itemId,
+                                                  ItemCollectionState state, int rating,
+                                                  List<String> tags, String comment,
+                                                  List<Long> gamePlatformIds,
+                                                  boolean shareToBroadcast, boolean shareToWeibo,
+                                                  boolean shareToWeChatMoments) {
+        return mFrodoService.collectItem(itemType.getApiString(), itemId, state.getApiString(),
+                rating, StringCompat.join(",", tags), comment, gamePlatformIds,
+                shareToBroadcast ? 1 : null, shareToWeibo ? 1 : null,
+                shareToWeChatMoments ? 1 : null);
+    }
+    public ApiRequest<ItemCollection> uncollectItem(CollectableItem.Type itemType, long itemId) {
+        return mFrodoService.uncollectItem(itemType.getApiString(), itemId);
+    }
+    public ApiRequest<ItemCollection> voteItemCollection(CollectableItem.Type itemType, long itemId,
+                                                         long itemCollectionId) {
+        return mFrodoService.voteItemCollection(itemType.getApiString(), itemId, itemCollectionId);
+    }
+    public ApiRequest<DoulistList> getItemRelatedDoulistList(CollectableItem.Type itemType,
+                                                             long itemId, Integer start,
+                                                             Integer count) {
+        return mFrodoService.getItemRelatedDoulistList(itemType.getApiString(), itemId, start,
+                count);
+    }
+    public ApiRequest<List<CollectableItem>> getItemRecommendationList(
+            CollectableItem.Type itemType, long itemId, Integer count) {
+        return mFrodoService.getItemRecommendationList(itemType.getApiString(), itemId, count);
+    }
+
+    public ApiRequest<ItemForumTopicList> getItemForumTopicList(CollectableItem.Type itemType,
+                                                                long itemId, Integer episode,
+                                                                Integer start, Integer count) {
+        return mFrodoService.getItemForumTopicList(itemType.getApiString(), itemId, episode, start,
+                count);
+    }
+
+    public ApiRequest<ReviewList> getGameGuideList(long itemId, Integer start, Integer count) {
+        return mFrodoService.getItemReviewList(CollectableItem.Type.GAME.getApiString(), itemId,
+                "guide", start, count);
+    }
+
+    public ApiRequest<ReviewList> getItemReviewList(CollectableItem.Type itemType, long itemId,
+                                                    Integer start, Integer count) {
+        return mFrodoService.getItemReviewList(itemType.getApiString(), itemId, null, start, count);
+    }
+
+    public ApiRequest<ReviewList> getUserReviewList(String userIdOrUid, Integer start,
+                                                    Integer count) {
+        // TODO: UserIdOrUidFrodoRequest
+        return mFrodoService.getUserReviewList(userIdOrUid, start, count);
+    }
+
+    public ApiRequest<ItemCollectionList> getItemCollectionList(CollectableItem.Type itemType,
+                                                                long itemId,
+                                                                boolean followingsFirst,
+                                                                Integer start, Integer count) {
+        return mFrodoService.getItemCollectionList(itemType.getApiString(), itemId,
+                followingsFirst ? 1 : null, start, count);
+    }
+
+    public ApiRequest<ItemAwardList> getItemAwardList(CollectableItem.Type itemType, long itemId,
+                                                      Integer start, Integer count) {
+        return mFrodoService.getItemAwardList(itemType.getApiString(), itemId, start, count);
+    }
+
+    public ApiRequest<CelebrityList> getItemCelebrityList(CollectableItem.Type itemType,
+                                                          long itemId) {
+        return mFrodoService.getItemCelebrityList(itemType.getApiString(), itemId);
+    }
+
+    public ApiRequest<PhotoList> getItemPhotoList(CollectableItem.Type itemType, long itemId,
+                                                  Integer start, Integer count) {
+        return mFrodoService.getItemPhotoList(itemType.getApiString(), itemId, start, count);
+    }
+
+    public ApiRequest<Rating> getItemRating(CollectableItem.Type itemType, long itemId) {
+        return mFrodoService.getItemRating(itemType.getApiString(), itemId);
+    }
+
+    public <ItemType> ApiRequest<ItemType> getItem(CollectableItem.Type itemType, long itemId) {
+        //noinspection unchecked
+        return (ApiRequest<ItemType>) mFrodoService.getItem(itemType.getApiString(), itemId);
+    }
+
+    public ApiRequest<UserList> getFollowerList(String userIdOrUid, Integer start, Integer count) {
+        return mFrodoService.getFollowerList(userIdOrUid, start, count);
+    }
+
+    public ApiRequest<UserList> getFollowingList(String userIdOrUid, Integer start, Integer count) {
+        return getFollowingList(userIdOrUid, start, count, false);
+    }
+
+    public ApiRequest<UserList> getFollowingList(String userIdOrUid, Integer start, Integer count,
+                                                 boolean followersFirst) {
+        return mFrodoService.getFollowingList(userIdOrUid, start, count, followersFirst ? "true"
+                : null);
+    }
+
+    public ApiRequest<UploadedImage> uploadBroadcastImage(Uri uri, Context context) {
+        String fileName = UriUtils.getDisplayName(uri, context);
+        RequestBody body = new ImageTypeUriRequestBody(uri, context);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("image", fileName, body);
+        return mFrodoService.uploadBroadcastImage(part);
+    }
+
+    public ApiRequest<Broadcast> sendBroadcast(String text, List<String> imageUrls,
+                                               String linkTitle, String linkUrl) {
+        boolean isImagesEmpty = CollectionUtils.isEmpty(imageUrls);
+        if (isImagesEmpty && !TextUtils.isEmpty(linkUrl)) {
+            return new ConvertBroadcastApiRequest(mFrodoService.sendBroadcastWithLifeStream(text,
+                    null, linkTitle, linkUrl));
+        }
+        String imageUrlsString = !isImagesEmpty ? StringCompat.join(",", imageUrls) : null;
+        return mFrodoService.sendBroadcast(text, imageUrlsString, linkTitle, linkUrl);
+    }
+
+    public ApiRequest<BroadcastList> getBroadcastRebroadcastedBroadcastList(long broadcastId,
+                                                                            Integer start,
+                                                                            Integer count) {
+        return mFrodoService.getBroadcastRebroadcastedBroadcastList(broadcastId, start, count);
+    }
+
+    public ApiRequest<BroadcastLikerList> getBroadcastLikerList(long broadcastId, Integer start,
+                                                                Integer count) {
+        return mFrodoService.getBroadcastLikerList(broadcastId, start, count);
+    }
+
+    public ApiRequest<CommentList> getBroadcastCommentList(long broadcastId, Integer start,
+                                                           Integer count) {
+        return mFrodoService.getBroadcastCommentList(broadcastId, start, count);
+    }
+
+    public ApiRequest<Broadcast> getBroadcast(long broadcastId) {
+        return mFrodoService.getBroadcast(broadcastId);
+    }
+
+    public ApiRequest<List<douya.network.api.info.apiv2.Broadcast>>
+    getApiV2BroadcastList(String userIdOrUid, String topic, Long untilId, Integer count) {
+        String url;
+        if (TextUtils.isEmpty(userIdOrUid) && TextUtils.isEmpty(topic)) {
+            url = "lifestream/home_timeline";
+        } else if (TextUtils.isEmpty(topic)) {
+            url = StringUtils.formatUs("lifestream/user_timeline/%s", userIdOrUid);
+        } else {
+            url = "lifestream/topics";
+        }
+        return mLifeStreamService.getBroadcastList(url, untilId, count, topic);
+    }
+
+    public void cancelApiRequests() {
+        mLifeStreamHttpClient.dispatcher().cancelAll();
+        mFrodoHttpClient.dispatcher().cancelAll();
+    }
+
+    private ApiService() {
+        mApiV2AuthenticationService = createAuthenticationService(
+                ApiContract.Request.Authentication.BaseUrls.API_V2,
+                ApiV2AuthenticationService.class);
+        mFrodoAuthenticationService = createAuthenticationService(
+                ApiContract.Request.Authentication.BaseUrls.FRODO, FrodoAuthenticationService.class,
+                new FrodoInterceptor(), new FrodoSignatureInterceptor());
+        mLifeStreamHttpClient = createApiHttpClient(AccountContract.AUTH_TOKEN_TYPE_API_V2,
+                new LifeStreamInterceptor());
+        mLifeStreamService = createApiService(ApiContract.Request.ApiV2.BASE_URL,
+                mLifeStreamHttpClient, LifeStreamService.class);
+        mFrodoHttpClient = createApiHttpClient(AccountContract.AUTH_TOKEN_TYPE_FRODO,
+                new FrodoInterceptor(), new FrodoSignatureInterceptor());
+        mFrodoService = createApiService(ApiContract.Request.Frodo.BASE_URL, mFrodoHttpClient,
+                FrodoService.class);
+    }
+
+    private static <T> T createApiService(String baseUrl, OkHttpClient client,
+                                          Class<T> serviceClass) {
+        return new Retrofit.Builder()
+                .addCallAdapterFactory(ApiCallAdapter.Factory.create())
+                .addConverterFactory(GsonResponseBodyConverterFactory.create())
+                .baseUrl(baseUrl)
+                .client(client)
+                .build()
+                .create(serviceClass);
+    }
+
+    private static OkHttpClient createApiHttpClient(String authTokenType,
+                                                    Interceptor... networkInterceptors) {
+        return createHttpClientBuilder(networkInterceptors)
+                // AuthenticationInterceptor may retry the request, so it must be an application
+                // interceptor.
+                .addInterceptor(new ApiAuthenticationInterceptor(authTokenType))
+                .build();
+    }
+
+    private static <T> T createAuthenticationService(String baseUrl, Class<T> serviceClass,
+                                                     Interceptor... networkInterceptors) {
+        return new Retrofit.Builder()
+                .addCallAdapterFactory(ApiCallAdapter.Factory.create())
+                .addConverterFactory(GsonResponseBodyConverterFactory.create())
+                .baseUrl(baseUrl)
+                .client(createHttpClientBuilder(networkInterceptors).build())
+                .build()
+                .create(serviceClass);
+    }
+
+    private static OkHttpClient.Builder createHttpClientBuilder(
+            Interceptor... networkInterceptors) {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        for (Interceptor interceptor : networkInterceptors) {
+            builder.addNetworkInterceptor(interceptor);
+        }
+        return builder
+                .addNetworkInterceptor(new StethoInterceptor());
+    }
+
     public ApiRequest<User> getUser(String userIdOrUid) {
         if (TextUtils.isEmpty(userIdOrUid)) {
             userIdOrUid = "~me";
         }
         return mLifeStreamService.getUser(userIdOrUid);
     }
+
     public ApiRequest<Void> deleteBroadcastComment(long broadcastId, long commentId) {
         return mFrodoService.deleteBroadcastComment(broadcastId, commentId);
     }
@@ -73,13 +311,16 @@ public class ApiService {
     public ApiRequest<Void> deleteBroadcast(long broadcastId) {
         return mFrodoService.deleteBroadcast(broadcastId);
     }
+
     public ApiRequest<Broadcast> rebroadcastBroadcast(long broadcastId, String text) {
         return mFrodoService.rebroadcastBroadcast(broadcastId, text);
     }
+
     public ApiRequest<TimelineList> getTimelineList(String userIdOrUid, String topic, Long untilId,
                                                     Integer count) {
         return getTimelineList(userIdOrUid, topic, untilId, count, null, false);
     }
+
     public ApiRequest<Broadcast> likeBroadcast(long broadcastId, boolean like) {
         if (like) {
             return mFrodoService.likeBroadcast(broadcastId);
@@ -87,12 +328,15 @@ public class ApiService {
             return mFrodoService.unlikeBroadcast(broadcastId);
         }
     }
+
     public ApiRequest<NotificationCount> getNotificationCount() {
         return mFrodoService.getNotificationCount();
     }
+
     public ApiRequest<NotificationList> getNotificationList(Integer start, Integer count) {
         return mFrodoService.getNotificationList(start, count);
     }
+
     public ApiRequest<TimelineList> getTimelineList(String userIdOrUid, String topic, Long untilId,
                                                     Integer count, Long lastVisitedId,
                                                     boolean guestOnly) {
@@ -106,8 +350,59 @@ public class ApiService {
         }
        /* return mFrodoService.getTimelineList(url, untilId, count, lastVisitedId, topic, guestOnly ?
                 1 : null);*/
-       return null;
+        return null;
     }
+
+    public ApiRequest<AuthenticationResponse> authenticate(String authTokenType, String username,
+                                                           String password) {
+        switch (authTokenType) {
+            case AccountContract.AUTH_TOKEN_TYPE_API_V2:
+                return authenticateApiV2(username, password);
+            case AccountContract.AUTH_TOKEN_TYPE_FRODO:
+                return authenticateFrodo(username, password);
+            default:
+                throw new IllegalArgumentException("Unknown authTokenType: " + authTokenType);
+        }
+    }
+
+    public ApiRequest<AuthenticationResponse> authenticate(String authTokenType,
+                                                           String refreshToken) {
+        switch (authTokenType) {
+            case AccountContract.AUTH_TOKEN_TYPE_API_V2:
+                return authenticateApiV2(refreshToken);
+            case AccountContract.AUTH_TOKEN_TYPE_FRODO:
+                return authenticateFrodo(refreshToken);
+            default:
+                throw new IllegalArgumentException("Unknown authTokenType: " + authTokenType);
+        }
+    }
+
+    private ApiRequest<AuthenticationResponse> authenticateApiV2(String refreshToken) {
+        return mApiV2AuthenticationService.authenticate(ApiContract.Request.ApiV2.USER_AGENT,
+                ApiContract.Request.Authentication.ACCEPT_CHARSET, ApiCredential.ApiV2.KEY,
+                ApiCredential.ApiV2.SECRET, ApiContract.Request.Authentication.RedirectUris.API_V2,
+                ApiContract.Request.Authentication.GrantTypes.REFRESH_TOKEN, refreshToken);
+    }
+
+    private ApiRequest<AuthenticationResponse> authenticateApiV2(String username, String password) {
+        return mApiV2AuthenticationService.authenticate(ApiContract.Request.ApiV2.USER_AGENT,
+                ApiContract.Request.Authentication.ACCEPT_CHARSET, ApiCredential.ApiV2.KEY,
+                ApiCredential.ApiV2.SECRET, ApiContract.Request.Authentication.RedirectUris.API_V2,
+                ApiContract.Request.Authentication.GrantTypes.PASSWORD, username, password);
+    }
+
+    private ApiRequest<AuthenticationResponse> authenticateFrodo(String username, String password) {
+        return mFrodoAuthenticationService.authenticate(ApiCredential.Frodo.KEY,
+                ApiCredential.Frodo.SECRET, ApiContract.Request.Authentication.RedirectUris.FRODO,
+                false, ApiContract.Request.Authentication.GrantTypes.PASSWORD, username, password);
+    }
+
+    private ApiRequest<AuthenticationResponse> authenticateFrodo(String refreshToken) {
+        return mFrodoAuthenticationService.authenticate(ApiCredential.Frodo.KEY,
+                ApiCredential.Frodo.SECRET, ApiContract.Request.Authentication.RedirectUris.FRODO,
+                false, ApiContract.Request.Authentication.GrantTypes.PASSWORD, refreshToken);
+    }
+
     public interface LifeStreamService {
 
         @GET("lifestream/user/{userIdOrUid}")
@@ -189,6 +484,47 @@ public class ApiService {
         @DELETE("lifestream/status/{broadcastId}")
         ApiRequest<douya.network.api.info.apiv2.Broadcast> deleteBroadcast(
                 @Path("broadcastId") long broadcastId);
+    }
+
+    public interface FrodoAuthenticationService {
+
+        @POST(ApiContract.Request.Authentication.URL)
+        @FormUrlEncoded
+        ApiRequest<AuthenticationResponse> authenticate(
+                @Field("client_id") String clientId, @Field("client_secret") String clientSecret,
+                @Field("redirect_uri") String redirectUri,
+                @Field("disable_account_create") Boolean disableAccountCreation,
+                @Field("grant_type") String grantType, @Field("username") String username,
+                @Field("password") String password);
+
+        @POST(ApiContract.Request.Authentication.URL)
+        @FormUrlEncoded
+        ApiRequest<AuthenticationResponse> authenticate(
+                @Field("client_id") String clientId, @Field("client_secret") String clientSecret,
+                @Field("redirect_uri") String redirectUri,
+                @Field("disable_account_create") Boolean disableAccountCreation,
+                @Field("grant_type") String grantType, @Field("refresh_token") String refreshToken);
+    }
+
+    public interface ApiV2AuthenticationService {
+
+        @POST(ApiContract.Request.Authentication.URL)
+        @FormUrlEncoded
+        ApiRequest<AuthenticationResponse> authenticate(
+                @Header(Http.Headers.USER_AGENT) String userAgent,
+                @Header(Http.Headers.ACCEPT_CHARSET) String acceptCharset,
+                @Field("client_id") String clientId, @Field("client_secret") String clientSecret,
+                @Field("redirect_uri") String redirectUri, @Field("grant_type") String grantType,
+                @Field("username") String username, @Field("password") String password);
+
+        @POST(ApiContract.Request.Authentication.URL)
+        @FormUrlEncoded
+        ApiRequest<AuthenticationResponse> authenticate(
+                @Header(Http.Headers.USER_AGENT) String userAgent,
+                @Header(Http.Headers.ACCEPT_CHARSET) String acceptCharset,
+                @Field("client_id") String clientId, @Field("client_secret") String clientSecret,
+                @Field("redirect_uri") String redirectUri, @Field("grant_type") String grantType,
+                @Field("refresh_token") String refreshToken);
     }
 
     public interface FrodoService {
@@ -387,5 +723,23 @@ public class ApiService {
 
         @GET("user/{userId}/chat")
         ApiRequest<DoumailThread> getDoumailThread(@Path("userId") long userId);
+    }
+
+    private static class ConvertBroadcastApiRequest extends ConvertApiRequest<
+            douya.network.api.info.apiv2.Broadcast, Broadcast> {
+
+        public ConvertBroadcastApiRequest(
+                ApiRequest<douya.network.api.info.apiv2.Broadcast> request) {
+            super(request);
+        }
+
+        @Override
+        protected Broadcast transform(
+                douya.network.api.info.apiv2.Broadcast responseBody) {
+            Broadcast broadcast = responseBody.toFrodo();
+            // Can contain "分享" instead of "推荐".
+            broadcast.fix();
+            return broadcast;
+        }
     }
 }

@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 
-package douya.network.api.util;
+package douya.network.api;
 
 import douya.account.info.AccountContract;
 import douya.account.util.AccountUtils;

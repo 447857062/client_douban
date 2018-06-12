@@ -12,7 +12,8 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.TintTypedArray;
 import android.util.AttributeSet;
 
-import deplink.com.douya.R;
+import com.douya.R;
+
 import douya.util.ViewUtils;
 
 

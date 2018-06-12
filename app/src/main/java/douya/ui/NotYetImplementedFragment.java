@@ -7,7 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import deplink.com.douya.R;
+import com.douya.R;
+
 
 /**
  * Created by ${kelijun} on 2018/6/5.

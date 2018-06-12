@@ -19,7 +19,8 @@ import android.support.v7.app.AppCompatDialogFragment;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 
-import deplink.com.douya.R;
+import com.douya.R;
+
 import douya.util.FragmentUtils;
 
 @SuppressWarnings("unused")

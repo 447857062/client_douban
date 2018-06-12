@@ -23,11 +23,12 @@ import android.widget.RelativeLayout;
 import android.widget.Space;
 import android.widget.TextView;
 
+import com.douya.R;
+
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import deplink.com.douya.R;
 import douya.broadcast.content.DeleteBroadcastManager;
 import douya.broadcast.content.LikeBroadcastManager;
 import douya.broadcast.content.RebroadcastBroadcastManager;

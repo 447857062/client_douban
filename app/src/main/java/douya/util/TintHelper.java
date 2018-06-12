@@ -19,7 +19,7 @@ import android.view.SubMenu;
 import android.view.Window;
 import android.widget.ImageView;
 
-import deplink.com.douya.R;
+import com.douya.R;
 
 
 public class TintHelper {

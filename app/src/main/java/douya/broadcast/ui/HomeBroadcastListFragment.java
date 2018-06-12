@@ -1,7 +1,8 @@
 package douya.broadcast.ui;
 
+import com.douya.R;
+
 import butterknife.BindDimen;
-import deplink.com.douya.R;
 import douya.broadcast.content.HomeBroadcastListResource;
 import douya.broadcast.content.TimelineBroadcastListResource;
 import douya.main.ui.MainActivity;

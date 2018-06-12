@@ -18,7 +18,8 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import deplink.com.douya.R;
+import com.douya.R;
+
 import douya.util.TooltipUtils;
 import douya.util.ViewUtils;
 

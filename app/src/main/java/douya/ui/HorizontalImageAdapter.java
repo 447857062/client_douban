@@ -9,9 +9,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.douya.R;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import deplink.com.douya.R;
 import douya.util.ViewUtils;
 
 public class HorizontalImageAdapter

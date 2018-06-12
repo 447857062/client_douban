@@ -20,10 +20,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 
+import com.douya.R;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import deplink.com.douya.R;
 
 
 public class AppUtils {

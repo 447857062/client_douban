@@ -13,7 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
 
-import deplink.com.douya.R;
+import com.douya.R;
 
 
 public class ConfirmRemoveCurrentAccountDialogFragment extends AppCompatDialogFragment {

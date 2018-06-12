@@ -31,7 +31,12 @@ public class AppBarWrapperLayout extends LinearLayout {
         super(context);
         init();
     }
-
+    public boolean isHidden() {
+        return getTranslationY() == getHideTranslationY();
+    }
+    public boolean isShowing() {
+        return mShowing;
+    }
     public AppBarWrapperLayout(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();

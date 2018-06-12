@@ -31,6 +31,6 @@ public class NotificationCountCache {
     }
 
     private static String getKeyForAccount(Account account) {
-        return KEY_PREFIX + '@' + account.name;
+        return ""/*KEY_PREFIX + '@' + account.name*/;
     }
 }

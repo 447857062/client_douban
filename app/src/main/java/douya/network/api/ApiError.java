@@ -8,6 +8,8 @@ package douya.network.api;
 import android.content.Context;
 import android.util.SparseIntArray;
 
+import com.douya.R;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,7 +17,6 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
-import deplink.com.douya.R;
 import douya.network.AuthenticationException;
 import douya.network.ResponseConversionException;
 import okhttp3.Response;

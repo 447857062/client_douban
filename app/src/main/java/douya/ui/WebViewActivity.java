@@ -35,6 +35,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import com.douya.R;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,7 +47,6 @@ import java.util.regex.Pattern;
 import butterknife.BindDimen;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import deplink.com.douya.R;
 import douya.account.info.AccountContract;
 import douya.account.util.AccountUtils;
 import douya.link.DoubanUriHandler;

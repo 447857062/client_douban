@@ -9,7 +9,7 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import deplink.com.douya.R;
+import com.douya.R;
 
 
 public class SimpleRating implements Parcelable {

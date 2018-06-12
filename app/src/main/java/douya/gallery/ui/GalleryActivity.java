@@ -6,11 +6,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.douya.R;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import deplink.com.douya.R;
 import douya.ui.ImageItem;
 
 public class GalleryActivity extends AppCompatActivity {

@@ -10,9 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.douya.R;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import deplink.com.douya.R;
 import douya.broadcast.ui.HomeBroadcastListFragment;
 import douya.ui.AppBarHost;
 import douya.ui.AppBarWrapperLayout;

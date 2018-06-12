@@ -13,9 +13,10 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.util.PatternsCompat;
 import android.text.TextUtils;
 
+import com.douya.R;
+
 import org.chromium.customtabsclient.CustomTabsActivityHelper;
 
-import deplink.com.douya.R;
 import douya.ui.WebViewActivity;
 import me.zhanghai.android.customtabshelper.CustomTabsHelperFragment;
 

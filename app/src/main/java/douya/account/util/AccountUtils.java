@@ -23,7 +23,7 @@ import douya.account.info.AccountContract;
 import douya.account.ui.AddAccountActivity;
 import douya.account.ui.SelectAccountActivity;
 import douya.network.api.info.apiv2.User;
-import douya.network.api.util.ApiAuthenticators;
+import douya.network.api.ApiAuthenticators;
 import douya.settings.info.Settings;
 import douya.util.GsonHelper;
 import douya.util.LogUtils;

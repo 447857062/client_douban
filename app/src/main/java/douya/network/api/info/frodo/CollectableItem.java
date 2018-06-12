@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.os.Parcel;
 import android.text.TextUtils;
 
+import com.douya.R;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -24,7 +25,6 @@ import org.threeten.bp.format.DateTimeParseException;
 
 import java.util.List;
 
-import deplink.com.douya.R;
 import douya.util.CollectionUtils;
 import douya.util.TimeUtils;
 

@@ -9,8 +9,8 @@ import android.content.Context;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
+import com.douya.BuildConfig;
 
-import deplink.com.douya.BuildConfig;
 import io.fabric.sdk.android.Fabric;
 
 public class FabricUtils {

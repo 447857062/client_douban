@@ -7,10 +7,11 @@ package douya.broadcast.content;
 
 import android.content.Context;
 
+import com.douya.R;
+
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import deplink.com.douya.R;
 import douya.content.RequestResourceWriter;
 import douya.content.ResourceWriterManager;
 import douya.eventbus.BroadcastRebroadcastErrorEvent;

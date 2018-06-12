@@ -7,7 +7,8 @@ package douya.broadcast.content;
 
 import android.content.Context;
 
-import deplink.com.douya.R;
+import com.douya.R;
+
 import douya.content.ResourceWriterManager;
 import douya.network.api.info.frodo.Broadcast;
 import douya.util.ToastUtils;

@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.douya.R;
 import com.transitionseverywhere.ChangeTransform;
 import com.transitionseverywhere.Fade;
 import com.transitionseverywhere.Transition;
@@ -22,7 +23,6 @@ import com.transitionseverywhere.TransitionSet;
 import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
-import deplink.com.douya.R;
 import douya.account.util.AccountUtils;
 import douya.network.api.info.apiv2.SimpleUser;
 import douya.network.api.info.apiv2.User;

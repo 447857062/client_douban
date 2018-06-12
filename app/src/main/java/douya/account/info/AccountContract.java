@@ -6,7 +6,7 @@
 package douya.account.info;
 
 
-import deplink.com.douya.BuildConfig;
+import com.douya.BuildConfig;
 
 public class AccountContract {
 

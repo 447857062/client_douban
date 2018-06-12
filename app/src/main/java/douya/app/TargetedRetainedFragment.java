@@ -28,6 +28,9 @@ public class TargetedRetainedFragment extends RetainedFragment {
             fragment = fragment.getParentFragment();
         }
     }
+    public void setTarget(Fragment fragment) {
+        setTarget(fragment, REQUEST_CODE_INVALID);
+    }
     public void setTarget(Fragment targetFragment, int requestCode) {
         mTargetFragment = targetFragment;
         mRequestCode = requestCode;

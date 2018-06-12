@@ -4,15 +4,17 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.view.View;
 import android.view.Window;
 
+import com.douya.R;
+
 import java.util.ArrayList;
 
-import deplink.com.douya.R;
 
 /**
  * Created by ${kelijun} on 2018/6/5.
@@ -20,6 +22,18 @@ import deplink.com.douya.R;
 
 public class TransitionUtils {
     private static final String TRANSITION_NAME_APPBAR = "appbar";
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public static void setupTransitionOnActivityCreated(Fragment fragment) {
+
+        if (!shouldEnableTransition()) {
+            return;
+        }
+
+        setupTransitionForAppBar(fragment);
+
+        ActivityCompat.startPostponedEnterTransition(fragment.getActivity());
+    }
+
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void setupTransitionBeforeDecorate(Activity activity) {
 
@@ -30,6 +44,15 @@ public class TransitionUtils {
         Window window = activity.getWindow();
         window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         window.setSharedElementsUseOverlay(false);
+    }
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public static void postponeTransition(Activity activity) {
+
+        if (!shouldEnableTransition()) {
+            return;
+        }
+
+        ActivityCompat.postponeEnterTransition(activity);
     }
     // AppCompatDelegateImplV7.setContentView() removes all views under android.R.id.content, so we
     // have to do this after it.

@@ -2,24 +2,34 @@ package douya.util;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Build;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.util.ObjectsCompat;
 import android.support.v4.view.MarginLayoutParamsCompat;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.content.res.AppCompatResources;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import deplink.com.douya.R;
+import com.douya.R;
+
 import douya.ui.ClickableMovementMethod;
 
 /**
@@ -29,6 +39,15 @@ import douya.ui.ClickableMovementMethod;
 public class ViewUtils {
 
     private ViewUtils() {}
+    public static void setWeight(View view, float weight) {
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
+        layoutParams.weight = weight;
+        view.setLayoutParams(layoutParams);
+    }
+    public static boolean isInLandscape(Context context) {
+        return context.getResources().getConfiguration().orientation
+                == Configuration.ORIENTATION_LANDSCAPE;
+    }
     public static int getColorFromAttrRes(int attrRes, int defaultValue, Context context) {
         TypedArray a = context.obtainStyledAttributes(new int[] { attrRes });
         try {
@@ -37,6 +56,27 @@ public class ViewUtils {
             a.recycle();
         }
     }
+    public static int dpToPxSize(float dp, Context context) {
+        float value = dpToPx(dp, context);
+        int size = (int) (value >= 0 ? value + 0.5f : value - 0.5f);
+        if (size != 0) {
+            return size;
+        } else if (value == 0) {
+            return 0;
+        } else if (value > 0) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
+    public static float dpToPx(float dp, Context context) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, metrics);
+    }
+    public static void setLayoutFullscreen(Activity activity) {
+        setLayoutFullscreen(activity.getWindow().getDecorView());
+    }
+
     public static void replaceChild(ViewGroup viewGroup, View oldChild, View newChild) {
         int index = viewGroup.indexOfChild(oldChild);
         viewGroup.removeViewAt(index);
@@ -72,6 +112,19 @@ public class ViewUtils {
             a.recycle();
         }
     }
+    public static void hideTextInputLayoutErrorOnTextChange(EditText editText,
+                                                            final TextInputLayout textInputLayout) {
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                textInputLayout.setError(null);
+            }
+        });
+    }
     public static int getWidthExcludingPadding(View view) {
         return Math.max(0, view.getWidth() - view.getPaddingLeft() - view.getPaddingRight());
     }
@@ -93,6 +146,23 @@ public class ViewUtils {
             a.recycle();
         }
     }
+    public static void fadeOutThenFadeIn(final View fromView, final View toView, final int duration,
+                                         final boolean gone) {
+        fadeOut(fromView, duration, gone, new Runnable() {
+            @Override
+            public void run() {
+                fadeIn(toView, duration);
+            }
+        });
+    }
+    public static void fadeOutThenFadeIn(View fromView, View toView, boolean gone) {
+        fadeOutThenFadeIn(fromView, toView, getShortAnimTime(fromView), gone);
+    }
+
+    public static void fadeOutThenFadeIn(final View fromView, final View toView) {
+        fadeOutThenFadeIn(fromView, toView, false);
+    }
+
     public static boolean hasSw600Dp(Context context) {
         return hasSwDp(600, context);
     }

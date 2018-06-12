@@ -8,7 +8,7 @@ package douya.network.api.info.frodo;
 import android.content.Context;
 import android.text.TextUtils;
 
-import deplink.com.douya.R;
+import com.douya.R;
 
 
 public enum ItemCollectionState {

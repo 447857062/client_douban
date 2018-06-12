@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.douya.R;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +27,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
-import deplink.com.douya.R;
 import douya.account.info.AccountContract;
 import douya.account.util.AccountUtils;
 import douya.network.api.info.apiv2.SimpleUser;

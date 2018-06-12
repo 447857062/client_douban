@@ -7,7 +7,8 @@ package douya.settings.info;
 
 import android.support.v7.app.AppCompatDelegate;
 
-import deplink.com.douya.R;
+import com.douya.R;
+
 import douya.settings.info.SettingsEntries.BooleanSettingsEntry;
 import douya.settings.info.SettingsEntries.EnumSettingsEntry;
 import douya.settings.info.SettingsEntries.StringSettingsEntry;

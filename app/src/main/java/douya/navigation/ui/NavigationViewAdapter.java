@@ -10,7 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import deplink.com.douya.R;
+import com.douya.R;
+
 import douya.util.ViewUtils;
 
 public class NavigationViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

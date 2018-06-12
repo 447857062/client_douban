@@ -17,9 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.douya.R;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import deplink.com.douya.R;
 import douya.account.content.AccountUserResource;
 import douya.account.util.AccountUtils;
 import douya.calendar.ui.CalendarActivity;

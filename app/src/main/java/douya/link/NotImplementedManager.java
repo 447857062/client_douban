@@ -7,7 +7,8 @@ package douya.link;
 
 import android.content.Context;
 
-import deplink.com.douya.R;
+import com.douya.R;
+
 import douya.settings.info.Settings;
 import douya.util.ToastUtils;
 

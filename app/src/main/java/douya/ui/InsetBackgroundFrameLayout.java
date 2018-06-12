@@ -11,7 +11,8 @@ import android.support.v7.widget.TintTypedArray;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
-import deplink.com.douya.R;
+import com.douya.R;
+
 
 /**
  * Created by ${kelijun} on 2018/6/5.

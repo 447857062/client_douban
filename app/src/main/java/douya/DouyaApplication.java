@@ -5,11 +5,11 @@ import android.os.Build;
 import android.webkit.WebView;
 
 import com.bumptech.glide.request.target.ViewTarget;
+import com.douya.BuildConfig;
+import com.douya.R;
 import com.facebook.stetho.Stetho;
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
-import deplink.com.douya.BuildConfig;
-import deplink.com.douya.R;
 import douya.fabric.FabricUtils;
 import douya.util.NightModeHelper;
 

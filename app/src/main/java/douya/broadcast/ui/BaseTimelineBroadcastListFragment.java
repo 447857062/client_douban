@@ -12,8 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.douya.R;
+
 import butterknife.BindView;
-import deplink.com.douya.R;
 import douya.broadcast.content.DeleteBroadcastManager;
 import douya.broadcast.content.LikeBroadcastManager;
 import douya.broadcast.content.RebroadcastBroadcastManager;

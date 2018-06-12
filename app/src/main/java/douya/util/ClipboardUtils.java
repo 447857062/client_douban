@@ -10,7 +10,8 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.text.TextUtils;
 
-import deplink.com.douya.R;
+import com.douya.R;
+
 import douya.network.api.info.ClipboardCopyable;
 
 public class ClipboardUtils {

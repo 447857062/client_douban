@@ -11,10 +11,11 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.widget.EditText;
 
+import com.douya.R;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import deplink.com.douya.R;
 import douya.network.api.info.frodo.SimpleUser;
 
 public class DoubanUtils {

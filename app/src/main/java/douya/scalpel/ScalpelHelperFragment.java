@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
 import douya.app.RetainedFragment;
+import douya.eventbus.EventBusUtils;
 
 /**
  * Created by ${kelijun} on 2018/6/11.
@@ -24,8 +25,19 @@ public class ScalpelHelperFragment extends RetainedFragment {
         }
         return fragment;
     }
+    public static void setEnabled(boolean enabled) {
+        EventBusUtils.postAsync(new SetEnabledEvent(enabled));
+    }
     public static ScalpelHelperFragment attachTo(Fragment fragment) {
         //noinspection deprecation
         return attachTo(fragment.getActivity());
+    }
+    private static class SetEnabledEvent {
+
+        public boolean enabled;
+
+        public SetEnabledEvent(boolean enabled) {
+            this.enabled = enabled;
+        }
     }
 }

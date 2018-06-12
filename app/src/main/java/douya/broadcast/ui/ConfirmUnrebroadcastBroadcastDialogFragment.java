@@ -12,10 +12,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
 
+import com.douya.R;
+
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import deplink.com.douya.R;
 import douya.eventbus.BroadcastUpdatedEvent;
 import douya.eventbus.EventBusUtils;
 import douya.network.api.info.frodo.Broadcast;

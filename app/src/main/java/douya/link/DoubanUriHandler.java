@@ -9,8 +9,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.UriMatcher;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import java.util.regex.Pattern;
+
+import douya.broadcast.ui.BroadcastActivity;
+import douya.broadcast.ui.BroadcastListActivity;
+import douya.followship.ui.FollowerListActivity;
+import douya.followship.ui.FollowingListActivity;
+import douya.profile.ui.ProfileActivity;
+import douya.util.UriUtils;
 
 
 public class DoubanUriHandler {
@@ -102,7 +110,7 @@ public class DoubanUriHandler {
         UriType uriType = UriType.values()[code];
 
         Intent intent;
-   /*     switch (uriType) {
+     switch (uriType) {
             case USER_BROADCAST_LIST:
                 intent = BroadcastListActivity.makeIntent(uri.getPathSegments().get(1), context);
                 break;
@@ -158,7 +166,7 @@ public class DoubanUriHandler {
                 return false;
         }
 
-        context.startActivity(intent);*/
+        context.startActivity(intent);
         return true;
     }
 

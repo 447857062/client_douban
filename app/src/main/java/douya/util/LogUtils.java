@@ -7,7 +7,7 @@ package douya.util;
 
 import android.util.Log;
 
-import deplink.com.douya.BuildConfig;
+import com.douya.BuildConfig;
 
 
 public class LogUtils {

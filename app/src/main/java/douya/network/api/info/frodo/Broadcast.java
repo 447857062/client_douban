@@ -5,12 +5,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.util.ObjectsCompat;
 import android.support.v7.content.res.AppCompatResources;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 
+import com.douya.R;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -19,7 +21,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-import deplink.com.douya.R;
 import douya.ui.IconSpan;
 import douya.ui.SpaceSpan;
 import douya.ui.UriSpan;
@@ -111,6 +112,10 @@ public class Broadcast implements Parcelable {
         //noinspection deprecation
         return parentBroadcast != null ? (Long) parentBroadcast.id : parentBroadcastId;
     }
+    public CharSequence getRebroadcastText(Context context) {
+        return !TextUtils.isEmpty(text) ? getTextWithEntities(false, context) : context.getString(
+                R.string.broadcast_rebroadcasted_broadcasts_simple_rebroadcast_text);
+    }
     // The broadcast for user actions.
     public Broadcast getEffectiveBroadcast() {
         if (isSimpleRebroadcast()) {
@@ -124,6 +129,10 @@ public class Broadcast implements Parcelable {
             return this;
         }
     }
+    public boolean isParentBroadcastId(Long parentBroadcastId) {
+        return ObjectsCompat.equals(getParentBroadcastId(), parentBroadcastId);
+    }
+
     public boolean isSimpleRebroadcastByOneself() {
         return isSimpleRebroadcast() && isAuthorOneself();
     }

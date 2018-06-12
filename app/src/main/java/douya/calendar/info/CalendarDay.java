@@ -8,13 +8,13 @@ package douya.calendar.info;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 
+import com.douya.R;
 import com.xhinliang.lunarcalendar.LunarCalendar;
 
 import org.threeten.bp.DayOfWeek;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.format.DateTimeFormatter;
 
-import deplink.com.douya.R;
 import douya.util.ViewUtils;
 
 public class CalendarDay {

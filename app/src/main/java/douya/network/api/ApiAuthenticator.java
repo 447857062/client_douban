@@ -3,15 +3,12 @@
  * All Rights Reserved.
  */
 
-package douya.network.api.util;
+package douya.network.api;
 
 import android.accounts.Account;
 
 import java.io.IOException;
 
-import douya.network.api.AndroidAuthenticator;
-import douya.network.api.ApiContract;
-import douya.network.api.ApiError;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 

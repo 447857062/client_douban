@@ -19,9 +19,10 @@ import android.webkit.CookieManager;
 import android.webkit.URLUtil;
 import android.webkit.WebChromeClient;
 
+import com.douya.R;
+
 import java.io.File;
 
-import deplink.com.douya.R;
 import douya.network.Http;
 
 public class WebViewUtils {

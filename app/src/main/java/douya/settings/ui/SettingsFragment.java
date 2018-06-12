@@ -11,9 +11,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
+import com.douya.R;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompatDividers;
 
-import deplink.com.douya.R;
 import douya.settings.info.Settings;
 import douya.util.NightModeHelper;
 import douya.util.SharedPrefsUtils;

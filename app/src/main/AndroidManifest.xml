@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="deplink.com.douya">
+    package="com.douya">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -33,19 +33,28 @@
         android:theme="@style/Theme.Douya"
         tools:ignore="UnusedAttribute">
         <activity
-            android:name="douya.ui.WebViewActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/webview_title" />
-        <activity
-            android:name="douya.account.ui.SelectAccountActivity"
+            android:name="douya.account.ui.AuthenticatorActivity"
+            android:label="@string/auth_title_new"
             android:launchMode="singleTop"
-            android:noHistory="true"
-            android:theme="@style/Theme.Douya.Translucent" />
+            android:theme="@style/Theme.Douya.PrimaryColorBackground" />
         <activity
             android:name="douya.account.ui.AddAccountActivity"
             android:launchMode="singleTop"
             android:noHistory="true"
             android:theme="@style/Theme.Douya.Translucent" />
+
+        <activity
+            android:name="douya.account.ui.SelectAccountActivity"
+            android:launchMode="singleTop"
+            android:noHistory="true"
+            android:theme="@style/Theme.Douya.Translucent" />
+
+        <activity
+            android:name="douya.ui.WebViewActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/webview_title" />
+
+
         <activity
             android:name="douya.gallery.ui.GalleryActivity"
             android:label="@string/gallery_title"
@@ -61,13 +70,90 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="douya.broadcast.ui.BroadcastListActivity"
+            android:theme="@style/Theme.Douya" />
+
+        <activity
+            android:name="douya.broadcast.ui.SendBroadcastActivity"
+            android:label="@string/broadcast_send_intent_filter_title"
+            android:theme="@style/Theme.Douya.DialogWhenLarge"
+            android:windowSoftInputMode="adjustResize|stateVisible">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="message/rfc822"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name="douya.broadcast.ui.BroadcastActivity"
             android:theme="@style/Theme.Douya.BroadcastActivity"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+
+        <activity
+            android:name="douya.broadcast.ui.RebroadcastBroadcastActivity"
+            android:label="@string/broadcast_rebroadcast_title"
+            android:theme="@style/Theme.Douya.DialogWhenLarge"
+            android:windowSoftInputMode="adjustResize|stateVisible" />
+
         <activity
             android:name="douya.profile.ui.ProfileActivity"
             android:theme="@style/Theme.Douya.TransparentBackground"
             android:windowSoftInputMode="adjustResize|stateHidden" />
+
+        <activity
+            android:name="douya.followship.ui.FollowerListActivity"
+            android:label="@string/profile_follower_list_title"
+            android:theme="@style/Theme.Douya" />
+        <activity
+            android:name="douya.followship.ui.FollowingListActivity"
+            android:label="@string/profile_following_list_title"
+            android:theme="@style/Theme.Douya" />
+        <activity
+            android:name="douya.item.ui.BookActivity"
+            android:label="@string/item_book_title"
+            android:theme="@style/Theme.Douya.Book" />
+
+        <activity
+            android:name="douya.item.ui.MovieActivity"
+            android:label="@string/item_movie_title"
+            android:theme="@style/Theme.Douya.Movie" />
+
+        <activity
+            android:name="douya.item.ui.MusicActivity"
+            android:label="@string/item_music_title"
+            android:theme="@style/Theme.Douya.Music" />
+
+        <activity
+            android:name="douya.item.ui.GameActivity"
+            android:label="@string/item_game_title"
+            android:theme="@style/Theme.Douya.GameApp" />
+
+
+        <activity
+            android:name="douya.item.ui.ItemCollectionActivity"
+            android:label="@string/item_collection_title"
+            android:theme="@style/Theme.Douya.DialogWhenLarge" />
+        <activity
+            android:name="douya.item.ui.ItemIntroductionActivity"
+            android:label="@string/item_introduction_title"
+            android:theme="@style/Theme.Douya.Light.DialogWhenLarge" />
+
         <activity
             android:name="douya.calendar.ui.CalendarActivity"
             android:label="@string/calendar_title"
@@ -87,6 +173,29 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="douya.main.ui.MainActivity" />
         </activity>
+        <activity
+            android:name="douya.settings.ui.AboutActivity"
+            android:label="@string/about_title"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Douya.PrimaryColorBackground">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="douya.settings.ui.SettingsActivity" />
+        </activity>
+        <service android:name="douya.media.PlayMusicService" />
+        <provider
+            android:name="douya.app.ImageTypeFileProvider"
+            android:authorities="@string/file_provider_authority"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="dc160e13d1b3c3e917e331e8b272c51a523d8599" />
     </application>
 
 </manifest>
