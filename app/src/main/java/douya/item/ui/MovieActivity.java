@@ -10,9 +10,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import me.zhanghai.android.douya.network.api.info.frodo.Movie;
-import me.zhanghai.android.douya.network.api.info.frodo.SimpleMovie;
-import me.zhanghai.android.douya.util.FragmentUtils;
+import douya.network.api.info.frodo.Movie;
+import douya.network.api.info.frodo.SimpleMovie;
+import douya.util.FragmentUtils;
 
 public class MovieActivity extends AppCompatActivity {
 

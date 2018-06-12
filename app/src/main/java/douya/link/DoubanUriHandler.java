@@ -17,6 +17,10 @@ import douya.broadcast.ui.BroadcastActivity;
 import douya.broadcast.ui.BroadcastListActivity;
 import douya.followship.ui.FollowerListActivity;
 import douya.followship.ui.FollowingListActivity;
+import douya.item.ui.BookActivity;
+import douya.item.ui.GameActivity;
+import douya.item.ui.MovieActivity;
+import douya.item.ui.MusicActivity;
 import douya.profile.ui.ProfileActivity;
 import douya.util.UriUtils;
 

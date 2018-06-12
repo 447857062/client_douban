@@ -39,6 +39,10 @@ import douya.ui.ClickableMovementMethod;
 public class ViewUtils {
 
     private ViewUtils() {}
+    public static boolean isInPortait(Context context) {
+        return context.getResources().getConfiguration().orientation
+                == Configuration.ORIENTATION_PORTRAIT;
+    }
     public static void setWeight(View view, float weight) {
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
         layoutParams.weight = weight;

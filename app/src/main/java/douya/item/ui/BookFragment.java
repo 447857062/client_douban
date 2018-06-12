@@ -11,13 +11,19 @@ import java.util.List;
 
 import butterknife.BindDimen;
 import douya.item.content.BaseItemFragmentResource;
+import douya.item.content.BookFragmentResource;
+import douya.item.content.ConfirmUncollectItemDialogFragment;
+import douya.item.content.UncollectItemManager;
 import douya.network.api.info.frodo.Book;
 import douya.network.api.info.frodo.CollectableItem;
 import douya.network.api.info.frodo.Doulist;
+import douya.network.api.info.frodo.Rating;
 import douya.network.api.info.frodo.SimpleBook;
 import douya.network.api.info.frodo.SimpleItemCollection;
 import douya.network.api.info.frodo.SimpleItemForumTopic;
 import douya.network.api.info.frodo.SimpleReview;
+import douya.ui.BarrierAdapter;
+import douya.ui.CopyTextDialogFragment;
 import douya.util.DoubanUtils;
 import douya.util.ViewUtils;
 

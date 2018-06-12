@@ -29,6 +29,7 @@ import douya.ui.WebViewActivity;
 import douya.util.DoubanUtils;
 import douya.util.FragmentUtils;
 import douya.util.ShareUtils;
+import douya.util.TransitionUtils;
 
 public class BroadcastListActivityFragment extends Fragment implements AppBarHost {
 
