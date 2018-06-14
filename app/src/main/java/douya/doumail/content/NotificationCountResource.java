@@ -105,7 +105,7 @@ public class NotificationCountResource  extends ResourceFragment<NotificationCou
                 if (mStopped) {
                     return;
                 }
-//                NotificationCountResource.super.onLoadOnStart();
+               NotificationCountResource.super.onLoadOnStart();
             });
         }
     }

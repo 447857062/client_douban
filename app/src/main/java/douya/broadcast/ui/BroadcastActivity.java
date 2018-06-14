@@ -5,11 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.douya.R;
-
 import douya.network.api.info.frodo.Broadcast;
+import douya.ui.FragmentFinishable;
+import douya.util.FragmentUtils;
+import douya.util.TransitionUtils;
 
-public class BroadcastActivity extends AppCompatActivity {
+public class BroadcastActivity extends AppCompatActivity  implements FragmentFinishable {
     private static final String KEY_PREFIX = BroadcastActivity.class.getName() + '.';
 
     private static final String EXTRA_BROADCAST_ID = KEY_PREFIX + "broadcast_id";
@@ -40,6 +41,55 @@ public class BroadcastActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_broadcast);
+        TransitionUtils.setupTransitionBeforeDecorate(this);
+
+        super.onCreate(savedInstanceState);
+
+        // Calls ensureSubDecor().
+        findViewById(android.R.id.content);
+
+        TransitionUtils.postponeTransition(this);
+
+        if (savedInstanceState == null) {
+            Intent intent = getIntent();
+            long broadcastId = intent.getLongExtra(EXTRA_BROADCAST_ID, -1);
+            Broadcast broadcast = intent.getParcelableExtra(EXTRA_BROADCAST);
+            boolean showSendComment = intent.getBooleanExtra(EXTRA_SHOW_SEND_COMMENT, false);
+            String title = intent.getStringExtra(EXTRA_TITLE);
+            mFragment = BroadcastFragment.newInstance(broadcastId, broadcast, showSendComment,
+                    title);
+            FragmentUtils.add(mFragment, this, android.R.id.content);
+        } else {
+            mFragment = FragmentUtils.findById(this, android.R.id.content);
+        }
+    }
+    @Override
+    public void finish() {
+        if (!mShouldFinish) {
+            mFragment.onFinish();
+            return;
+        }
+        super.finish();
+    }
+
+    @Override
+    public void finishAfterTransition() {
+        if (!mShouldFinish) {
+            mFragment.onFinish();
+            return;
+        }
+        super.finishAfterTransition();
+    }
+
+    @Override
+    public void finishFromFragment() {
+        mShouldFinish = true;
+        super.finish();
+    }
+
+    @Override
+    public void finishAfterTransitionFromFragment() {
+        mShouldFinish = true;
+        super.supportFinishAfterTransition();
     }
 }

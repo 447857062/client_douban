@@ -59,12 +59,19 @@ public class NavigationFragment extends Fragment implements OnAccountsUpdateList
 
     private boolean mNeedReloadForActiveAccountChange;
     private boolean mWillReloadForActiveAccountChange;
+
     public static NavigationFragment newInstance() {
         //noinspection deprecation
         return new NavigationFragment();
     }
 
     public NavigationFragment() {
+    }
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.navigation_fragment, container, false);
     }
 
     @Override
@@ -75,12 +82,7 @@ public class NavigationFragment extends Fragment implements OnAccountsUpdateList
         mHeaderLayout = (NavigationHeaderLayout) mNavigationView.getHeaderView(0);
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.navigation_fragment, container, false);
-    }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -153,9 +155,11 @@ public class NavigationFragment extends Fragment implements OnAccountsUpdateList
             }
         }
     }
+
     private void openSettings() {
         startActivity(SettingsActivity.makeIntent(getActivity()));
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -181,12 +185,13 @@ public class NavigationFragment extends Fragment implements OnAccountsUpdateList
     public void onDestroy() {
         super.onDestroy();
 
-          AccountUtils.removeOnAccountListUpdatedListener(this);
+        AccountUtils.removeOnAccountListUpdatedListener(this);
 
         for (AccountUserResource userResource : mUserResourceMap.values()) {
                 userResource.detach();
         }
     }
+
     @Override
     public void onAccountsUpdated(Account[] accounts) {
 
@@ -202,8 +207,8 @@ public class NavigationFragment extends Fragment implements OnAccountsUpdateList
             mHasPendingAccountListChange = true;
         }
     }
-    private void onAccountListChanged() {
 
+    private void onAccountListChanged() {
         ArrayMap<Account, AccountUserResource> oldUserResourceMap = mUserResourceMap;
         mUserResourceMap = new ArrayMap<>();
         for (Account account : AccountUtils.getAccounts()) {
@@ -218,6 +223,7 @@ public class NavigationFragment extends Fragment implements OnAccountsUpdateList
         mHeaderLayout.onAccountListChanged();
         mNavigationViewAdapter.onAccountListChanged();
     }
+
     @Override
     public void onLoadUserStarted(int requestCode) {
 
@@ -232,6 +238,7 @@ public class NavigationFragment extends Fragment implements OnAccountsUpdateList
     public void onLoadUserError(int requestCode, ApiError error) {
 
     }
+
     @Override
     public void onUserChanged(int requestCode, User newUser) {
         mHeaderLayout.bind();
@@ -246,6 +253,7 @@ public class NavigationFragment extends Fragment implements OnAccountsUpdateList
     public SimpleUser getPartialUser(Account account) {
         return mUserResourceMap.get(account).getPartialUser();
     }
+
     @Override
     public User getUser(Account account) {
         return mUserResourceMap.get(account).get();
@@ -283,8 +291,6 @@ public class NavigationFragment extends Fragment implements OnAccountsUpdateList
     }
 
 
-
-
     @Override
     public void onUserWriteStarted(int requestCode) {
 
@@ -294,6 +300,7 @@ public class NavigationFragment extends Fragment implements OnAccountsUpdateList
     public void onUserWriteFinished(int requestCode) {
 
     }
+
     private void reloadForActiveAccountChange() {
 
         if (getNavigationHost() == null) {
@@ -344,9 +351,11 @@ public class NavigationFragment extends Fragment implements OnAccountsUpdateList
         AccountUtils.setActiveAccount(AccountUtils.getRecentOneAccount());
         AccountUtils.removeAccount(oldActiveAccount);
     }
+
     private void openCalendar() {
         startActivity(CalendarActivity.makeIntent(getActivity()));
     }
+
     private Host getNavigationHost() {
         return (Host) getActivity();
     }

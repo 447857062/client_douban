@@ -120,14 +120,13 @@ public class AccountUtils {
     }
 
     public static Account[] getAccounts() {
+        LogUtils.d("Account[] length"+getAccountManager().getAccountsByType(AccountContract.ACCOUNT_TYPE).length);
         return getAccountManager().getAccountsByType(AccountContract.ACCOUNT_TYPE);
     }
     private static Account getAccountByName(String accountName) {
-
         if (TextUtils.isEmpty(accountName)) {
             return null;
         }
-
         for (Account account : getAccounts()) {
             if (TextUtils.equals(account.name, accountName)) {
                 return account;
@@ -296,7 +295,6 @@ public class AccountUtils {
     // Only intended for selecting an active account when there is none, changing active
     // account should be handled in settings.
     public static void selectAccount(Activity activity, Intent onSelectedIntent) {
-
         if (getAccounts().length == 0) {
             throw new IllegalStateException("Should have checked for hasAccount()");
         }

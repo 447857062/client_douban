@@ -9,6 +9,7 @@ import android.accounts.Account;
 
 import java.io.IOException;
 
+import douya.network.AndroidAuthenticator;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 

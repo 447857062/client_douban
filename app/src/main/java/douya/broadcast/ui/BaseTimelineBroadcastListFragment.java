@@ -138,7 +138,7 @@ public abstract class BaseTimelineBroadcastListFragment extends BaseBroadcastLis
                 RebroadcastBroadcastManager.getInstance().write(broadcast.getEffectiveBroadcast(),
                         null, getActivity());
             } else {
-             //   startActivity(RebroadcastBroadcastActivity.makeIntent(broadcast, getActivity()));
+               startActivity(RebroadcastBroadcastActivity.makeIntent(broadcast, getActivity()));
             }
         } else {
             if (quick) {
@@ -158,7 +158,7 @@ public abstract class BaseTimelineBroadcastListFragment extends BaseBroadcastLis
     public void onCommentBroadcast(Broadcast broadcast, View sharedView) {
         // Open ime for comment if there is none; otherwise we always let the user see what others
         // have already said first, to help to make the world a better place.
-        //openBroadcast(broadcast, sharedView, broadcast.canComment() && broadcast.commentCount == 0);
+        openBroadcast(broadcast, sharedView, broadcast.canComment() && broadcast.commentCount == 0);
     }
 
     @Override
@@ -176,6 +176,6 @@ public abstract class BaseTimelineBroadcastListFragment extends BaseBroadcastLis
 
     protected void onSendBroadcast() {
         Activity activity = getActivity();
-       // activity.startActivity(SendBroadcastActivity.makeIntent(activity));
+        activity.startActivity(SendBroadcastActivity.makeIntent(activity));
     }
 }

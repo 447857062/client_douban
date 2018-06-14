@@ -1,11 +1,17 @@
+/*
+ * Copyright (c) 2016 Zhang Hai <Dreaming.in.Code.ZH@Gmail.com>
+ * All Rights Reserved.
+ */
+
 package douya.navigation.ui;
 
 import android.accounts.Account;
+import android.annotation.TargetApi;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -28,13 +34,11 @@ import douya.network.api.info.apiv2.SimpleUser;
 import douya.network.api.info.apiv2.User;
 import douya.ui.CrossfadeText;
 import douya.util.DrawableUtils;
+import douya.util.ImageUtils;
 import douya.util.ViewUtils;
 
-/**
- * Created by ${kelijun} on 2018/6/5.
- */
-
 public class NavigationHeaderLayout extends FrameLayout {
+
     @BindView(R.id.backdrop)
     ImageView mBackdropImage;
     @BindView(R.id.scrim)
@@ -63,6 +67,7 @@ public class NavigationHeaderLayout extends FrameLayout {
     TextView mDescriptionText;
     @BindView(R.id.dropDown)
     ImageView mDropDownImage;
+
     private Adapter mAdapter;
     private Listener mListener;
 
@@ -72,39 +77,33 @@ public class NavigationHeaderLayout extends FrameLayout {
 
     private boolean mAccountTransitionRunning;
     private boolean mShowingAccountList;
-    public boolean isShowingAccountList() {
-        return mShowingAccountList;
-    }
-    public void onAccountListChanged() {
-        boolean needReload = !mActiveAccount.equals(AccountUtils.getActiveAccount());
-        bind();
-        if (mListener != null && needReload) {
-            mListener.onAccountTransitionStart();
-            mListener.onAccountTransitionEnd();
-        }
-    }
-    public NavigationHeaderLayout(@NonNull Context context) {
+
+    public NavigationHeaderLayout(Context context) {
         super(context);
+
         init();
     }
 
-    public NavigationHeaderLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public NavigationHeaderLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+
         init();
     }
 
-    public NavigationHeaderLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public NavigationHeaderLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
         init();
     }
 
-    public NavigationHeaderLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public NavigationHeaderLayout(Context context, AttributeSet attrs, int defStyleAttr,
+                                  int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+
         init();
     }
-    public void setAdapter(Adapter adapter) {
-        mAdapter = adapter;
-    }
+
     private void init() {
 
         ViewUtils.inflateInto(R.layout.navigation_header_layout, this);
@@ -115,41 +114,153 @@ public class NavigationHeaderLayout extends FrameLayout {
         mInfoLayout.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-              //  showAccountList(!mShowingAccountList);
+                showAccountList(!mShowingAccountList);
             }
         });
     }
+
+    public void setAdapter(Adapter adapter) {
+        mAdapter = adapter;
+    }
+
     public void setListener(Listener listener) {
         mListener = listener;
     }
-    public void setShowingAccountList(boolean showing) {
-        showAccountList(showing, false);
+
+    public void bind() {
+
+        if (mAdapter == null) {
+            return;
+        }
+
+        bindActiveUser();
+        bindRecentUsers();
     }
-    private void showAccountList(boolean show, boolean animate) {
 
-        if (mShowingAccountList == show) {
-            return;
+    public void onAccountListChanged() {
+        boolean needReload = !mActiveAccount.equals(AccountUtils.getActiveAccount());
+        bind();
+        if (mListener != null && needReload) {
+            mListener.onAccountTransitionStart();
+            mListener.onAccountTransitionEnd();
         }
+    }
 
-        if (mListener == null) {
-            return;
-        }
+    private void bindActiveUser() {
 
-        float rotation = show ? 180 : 0;
-        if (animate) {
-            mDropDownImage.animate()
-                    .rotation(rotation)
-                    .setDuration(ViewUtils.getShortAnimTime(getContext()))
-                    .start();
+        mActiveAccount = AccountUtils.getActiveAccount();
+
+        User user = mAdapter.getUser(mActiveAccount);
+        if (user != null) {
+            bindAvatarImage(mAvatarImage, user.getLargeAvatarOrAvatar());
+            mNameText.setText(user.name);
+            if (!TextUtils.isEmpty(user.signature)) {
+                mDescriptionText.setText(user.signature);
+            } else {
+                //noinspection deprecation
+                mDescriptionText.setText(user.uid);
+            }
         } else {
-            mDropDownImage.setRotation(rotation);
+            SimpleUser partialUser = mAdapter.getPartialUser(mActiveAccount);
+            bindAvatarImage(mAvatarImage, null);
+            mNameText.setText(partialUser.name);
+            //noinspection deprecation
+            mDescriptionText.setText(partialUser.uid);
         }
-        mListener.showAccountList(show);
-        mShowingAccountList = show;
+        mAvatarImage.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mAccountTransitionRunning) {
+                    return;
+                }
+                if (mListener != null) {
+                    mListener.openProfile(mActiveAccount);
+                }
+            }
+        });
+        mAvatarImage.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (mAccountTransitionRunning) {
+                    return false;
+                }
+                if (mListener != null) {
+                    mListener.openProfile(mActiveAccount);
+                }
+                return true;
+            }
+        });
+        //mBackdropImage.setImageResource();
     }
-    private void showAccountList(boolean show) {
-        showAccountList(show, true);
+
+    private void bindRecentUsers() {
+        mRecentOneAccount = AccountUtils.getRecentOneAccount();
+        bindRecentUser(mRecentOneAvatarImage, mRecentOneAccount);
+        mRecentTwoAccount = AccountUtils.getRecentTwoAccount();
+        bindRecentUser(mRecentTwoAvatarImage, mRecentTwoAccount);
     }
+
+    private void bindRecentUser(ImageView avatarImage, final Account account) {
+
+        if (account == null) {
+            avatarImage.setVisibility(GONE);
+            return;
+        }
+
+        avatarImage.setVisibility(VISIBLE);
+        User user = mAdapter.getUser(account);
+        if (user != null) {
+            bindAvatarImage(avatarImage, user.getLargeAvatarOrAvatar());
+        } else {
+            bindAvatarImage(avatarImage, null);
+        }
+        avatarImage.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switchToAccountWithTransitionIfNotRunning(account);
+            }
+        });
+        avatarImage.setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (mAccountTransitionRunning) {
+                    return false;
+                }
+                if (mListener != null) {
+                    mListener.openProfile(account);
+                }
+                return true;
+            }
+        });
+    }
+
+    private void bindAvatarImage(ImageView avatarImage, String avatarUrl) {
+
+        if (TextUtils.isEmpty(avatarUrl)) {
+            avatarImage.setImageResource(R.drawable.avatar_icon_white_inactive_64dp);
+            avatarImage.setTag(null);
+            return;
+        }
+
+        for (ImageView anotherAvatarImage : mAvatarImages) {
+            String anotherAvatarUrl = (String) anotherAvatarImage.getTag();
+            if (TextUtils.equals(anotherAvatarUrl , avatarUrl)) {
+                setAvatarImageFrom(avatarImage, anotherAvatarImage);
+                return;
+            }
+        }
+
+        ImageUtils.loadNavigationHeaderAvatar(avatarImage, avatarUrl);
+    }
+
+    private void setAvatarImageFrom(ImageView toAvatarImage, ImageView fromAvatarImage) {
+        if (toAvatarImage == fromAvatarImage) {
+            return;
+        }
+        toAvatarImage.setImageDrawable(fromAvatarImage.getDrawable());
+        toAvatarImage.setTag(fromAvatarImage.getTag());
+    }
+
     public void switchToAccountWithTransitionIfNotRunning(Account account) {
 
         if (mAccountTransitionRunning) {
@@ -172,13 +283,16 @@ public class NavigationHeaderLayout extends FrameLayout {
         }
         bind();
     }
+
     private void beginAvatarTransitionFromRecent(ImageView recentAvatarImage) {
         beginAvatarTransition(recentAvatarImage, mAvatarImage, null);
     }
+
     private void beginAvatarTransitionFromNonRecent() {
         beginAvatarTransition(mAvatarImage, mRecentOneAvatarImage,
                 mRecentTwoAccount != null ? mRecentTwoAvatarImage : null);
     }
+
     private void beginAvatarTransition(ImageView moveAvatarOneImage, ImageView moveAvatarTwoImage,
                                        ImageView moveAvatarThreeImage) {
 
@@ -260,12 +374,7 @@ public class NavigationHeaderLayout extends FrameLayout {
             resetMoveToAvatarTransform(moveAvatarThreeImage);
         }
     }
-    private void resetMoveToAvatarTransform(ImageView moveToAvatarImage) {
-        moveToAvatarImage.setTranslationX(0);
-        moveToAvatarImage.setTranslationY(0);
-        moveToAvatarImage.setScaleX(1);
-        moveToAvatarImage.setScaleY(1);
-    }
+
     private void addChangeMoveToAvatarTransformToTransitionSet(ImageView moveFromAvatarImage,
                                                                ImageView moveToAvatarImage,
                                                                TransitionSet transitionSet) {
@@ -282,23 +391,48 @@ public class NavigationHeaderLayout extends FrameLayout {
         transitionSet.addTransition(changeMoveToAvatarTransform);
     }
 
-    private void setAvatarImageFrom(ImageView toAvatarImage, ImageView fromAvatarImage) {
-        if (toAvatarImage == fromAvatarImage) {
-            return;
-        }
-        toAvatarImage.setImageDrawable(fromAvatarImage.getDrawable());
-        toAvatarImage.setTag(fromAvatarImage.getTag());
+    private void resetMoveToAvatarTransform(ImageView moveToAvatarImage) {
+        moveToAvatarImage.setTranslationX(0);
+        moveToAvatarImage.setTranslationY(0);
+        moveToAvatarImage.setScaleX(1);
+        moveToAvatarImage.setScaleY(1);
     }
 
-    public void bind() {
+    public boolean isShowingAccountList() {
+        return mShowingAccountList;
+    }
 
-        if (mAdapter == null) {
+    public void setShowingAccountList(boolean showing) {
+        showAccountList(showing, false);
+    }
+
+    private void showAccountList(boolean show, boolean animate) {
+
+        if (mShowingAccountList == show) {
             return;
         }
 
-     //   bindActiveUser();
-      //  bindRecentUsers();
+        if (mListener == null) {
+            return;
+        }
+
+        float rotation = show ? 180 : 0;
+        if (animate) {
+            mDropDownImage.animate()
+                    .rotation(rotation)
+                    .setDuration(ViewUtils.getShortAnimTime(getContext()))
+                    .start();
+        } else {
+            mDropDownImage.setRotation(rotation);
+        }
+        mListener.showAccountList(show);
+        mShowingAccountList = show;
     }
+
+    private void showAccountList(boolean show) {
+        showAccountList(show, true);
+    }
+
     public interface Adapter {
         SimpleUser getPartialUser(Account account);
         User getUser(Account account);

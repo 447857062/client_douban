@@ -13,6 +13,33 @@ public class TargetedRetainedFragment extends RetainedFragment {
 
     private Fragment mTargetFragment;
     private int mRequestCode = REQUEST_CODE_INVALID;
+
+    public void setTarget(Fragment targetFragment, int requestCode) {
+        mTargetFragment = targetFragment;
+        mRequestCode = requestCode;
+    }
+    public void setTarget(Fragment fragment) {
+        setTarget(fragment, REQUEST_CODE_INVALID);
+    }
+    protected Fragment getTarget() {
+        return mTargetFragment;
+    }
+
+    protected boolean hasRequestCode() {
+        return mRequestCode != REQUEST_CODE_INVALID;
+    }
+
+    protected int getRequestCode() {
+        return mRequestCode;
+    }
+
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        mTargetFragment = null;
+    }
     /**
      * Should be called in {@link Fragment#onDestroy()}.
      */
@@ -27,18 +54,5 @@ public class TargetedRetainedFragment extends RetainedFragment {
             }
             fragment = fragment.getParentFragment();
         }
-    }
-    public void setTarget(Fragment fragment) {
-        setTarget(fragment, REQUEST_CODE_INVALID);
-    }
-    public void setTarget(Fragment targetFragment, int requestCode) {
-        mTargetFragment = targetFragment;
-        mRequestCode = requestCode;
-    }
-    protected Fragment getTarget() {
-        return mTargetFragment;
-    }
-    protected int getRequestCode() {
-        return mRequestCode;
     }
 }

@@ -48,7 +48,30 @@
             android:launchMode="singleTop"
             android:noHistory="true"
             android:theme="@style/Theme.Douya.Translucent" />
-
+        <activity
+            android:name="douya.link.UriHandlerActivity"
+            android:launchMode="singleTop"
+            android:noHistory="true"
+            android:theme="@style/Theme.Douya.Translucent">
+            <intent-filter android:scheme="http">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="douban" android:host="douban.com" />
+                <data android:scheme="https" android:host="www.douban.com" />
+                <data android:scheme="http" android:host="www.douban.com" />
+                <data android:scheme="https" android:host="book.douban.com" />
+                <data android:scheme="http" android:host="book.douban.com" />
+                <data android:scheme="https" android:host="movie.douban.com" />
+                <data android:scheme="http" android:host="movie.douban.com" />
+                <data android:scheme="https" android:host="music.douban.com" />
+                <data android:scheme="http" android:host="music.douban.com" />
+                <data android:scheme="https" android:host="m.douban.com" />
+                <data android:scheme="http" android:host="m.douban.com" />
+                <data android:scheme="https" android:host="frodo.douban.com" />
+                <data android:scheme="http" android:host="frodo.douban.com" />
+            </intent-filter>
+        </activity>
         <activity
             android:name="douya.ui.WebViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -176,6 +199,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="douya.main.ui.MainActivity" />
         </activity>
+
         <activity
             android:name="douya.settings.ui.AboutActivity"
             android:label="@string/about_title"
@@ -185,7 +209,25 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="douya.settings.ui.SettingsActivity" />
         </activity>
+
+
         <service android:name="douya.media.PlayMusicService" />
+        <service android:name="douya.content.ResourceWriterService" />
+        <service android:name="douya.gallery.app.SaveImageService" />
+        <service
+            android:name="douya.account.app.AuthenticatorService"
+            tools:ignore="ExportedService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+
+
+
         <provider
             android:name="douya.app.ImageTypeFileProvider"
             android:authorities="@string/file_provider_authority"
@@ -195,7 +237,28 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_provider_paths" />
         </provider>
-
+        <provider
+            android:name="douya.app.ImageTypeFileProvider"
+            android:authorities="@string/file_provider_authority"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
+        <receiver android:name="douya.calendar.app.CalendarAppWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/calendar_appwidget" />
+        </receiver>
+        <receiver android:name="douya.media.MediaButtonReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="dc160e13d1b3c3e917e331e8b272c51a523d8599" />

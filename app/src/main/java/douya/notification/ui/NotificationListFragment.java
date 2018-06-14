@@ -1,16 +1,57 @@
-package douya.notification.ui;
-
-import android.support.v4.app.Fragment;
-
-import douya.network.api.info.frodo.Notification;
-import douya.notification.content.NotificationListResource;
-
-/**
- * Created by ${kelijun} on 2018/6/5.
+/*
+ * Copyright (c) 2015 Zhang Hai <Dreaming.in.Code.ZH@Gmail.com>
+ * All Rights Reserved.
  */
 
-public class NotificationListFragment extends Fragment {
+package douya.notification.ui;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+
+import com.douya.R;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import douya.eventbus.EventBusUtils;
+import douya.eventbus.NotificationUpdatedEvent;
+import douya.main.ui.MainActivity;
+import douya.network.api.ApiError;
+import douya.network.api.info.frodo.Notification;
+import douya.notification.content.NotificationListResource;
+import douya.ui.LoadMoreAdapter;
+import douya.ui.NoChangeAnimationItemAnimator;
+import douya.ui.OnVerticalScrollListener;
+import douya.util.LogUtils;
+import douya.util.ToastUtils;
+import douya.util.ViewUtils;
+
+public class NotificationListFragment extends Fragment implements NotificationListResource.Listener,
+        NotificationAdapter.Listener {
+
+    @BindView(R.id.swipe_refresh)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.notification_list)
+    RecyclerView mNotificationList;
+    @BindView(R.id.progress)
+    ProgressBar mProgress;
+
     private NotificationListResource mNotificationListResource;
+
+    private NotificationAdapter mNotificationAdapter;
+    private LoadMoreAdapter mAdapter;
+
     public static NotificationListFragment newInstance() {
         //noinspection deprecation
         return new NotificationListFragment();
@@ -20,9 +61,119 @@ public class NotificationListFragment extends Fragment {
      * @deprecated Use {@link #newInstance()} instead.
      */
     public NotificationListFragment() {}
-    public void refresh() {
-        mNotificationListResource.load(false);
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.notification_list_fragment, container, false);
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ButterKnife.bind(this, view);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mNotificationListResource = NotificationListResource.attachTo(this);
+
+        mSwipeRefreshLayout.setOnRefreshListener(this::refresh);
+
+        mNotificationList.setHasFixedSize(true);
+        mNotificationList.setItemAnimator(new NoChangeAnimationItemAnimator());
+        Activity activity = getActivity();
+        mNotificationList.setLayoutManager(new LinearLayoutManager(activity));
+        mNotificationAdapter = new NotificationAdapter(mNotificationListResource.get(), activity);
+        mNotificationAdapter.setListener(this);
+        mAdapter = new LoadMoreAdapter(mNotificationAdapter);
+        mNotificationList.setAdapter(mAdapter);
+        mNotificationList.addOnScrollListener(new OnVerticalScrollListener() {
+            @Override
+            public void onScrolledToBottom() {
+                mNotificationListResource.load(true);
+            }
+        });
+
+        updateRefreshing();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mNotificationListResource.detach();
+    }
+
+    @Override
+    public void onLoadNotificationListStarted(int requestCode) {
+        updateRefreshing();
+    }
+
+    @Override
+    public void onLoadNotificationListFinished(int requestCode) {
+        updateRefreshing();
+    }
+
+    @Override
+    public void onLoadNotificationListError(int requestCode, ApiError error) {
+        LogUtils.e(error.toString());
+        Activity activity = getActivity();
+        ToastUtils.show(ApiError.getErrorString(error, activity), activity);
+    }
+
+    @Override
+    public void onNotificationListChanged(int requestCode, List<Notification> newNotificationList) {
+        mNotificationAdapter.replace(newNotificationList);
+        onNotificationListUpdated();
+    }
+
+    @Override
+    public void onNotificationListAppended(int requestCode,
+                                           List<Notification> appendedNotificationList) {
+        mNotificationAdapter.addAll(appendedNotificationList);
+        onNotificationListUpdated();
+    }
+
+    @Override
+    public void onNotificationChanged(int requestCode, int position, Notification newNotification) {
+        mNotificationAdapter.set(position, newNotification);
+        onNotificationListUpdated();
+    }
+
+    @Override
+    public void onNotificationRemoved(int requestCode, int position) {
+        mNotificationAdapter.remove(position);
+        onNotificationListUpdated();
+    }
+
+    private void updateRefreshing() {
+        boolean loading = mNotificationListResource.isLoading();
+        boolean empty = mNotificationListResource.isEmpty();
+        boolean loadingMore = mNotificationListResource.isLoadingMore();
+        mSwipeRefreshLayout.setRefreshing(loading && (mSwipeRefreshLayout.isRefreshing() || !empty)
+                && !loadingMore);
+        ViewUtils.setVisibleOrGone(mProgress, loading && empty);
+        mAdapter.setLoading(loading && !empty && loadingMore);
+    }
+
+    @Override
+    public void onMarkNotificationAsRead(Notification notification) {
+        notification.read = true;
+        EventBusUtils.postAsync(new NotificationUpdatedEvent(notification, this));
+    }
+
+    private void onNotificationListUpdated() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null) {
+            activity.onNotificationUnreadCountUpdate(getUnreadCount());
+        }
+    }
+
     public int getUnreadCount() {
         if (!mNotificationListResource.has()) {
             return 0;
@@ -34,5 +185,9 @@ public class NotificationListFragment extends Fragment {
             }
         }
         return count;
+    }
+
+    public void refresh() {
+        mNotificationListResource.load(false);
     }
 }

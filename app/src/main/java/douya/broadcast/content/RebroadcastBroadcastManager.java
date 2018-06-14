@@ -13,10 +13,7 @@ public class RebroadcastBroadcastManager extends ResourceWriterManager<Rebroadca
     private static class InstanceHolder {
         public static final RebroadcastBroadcastManager VALUE = new RebroadcastBroadcastManager();
     }
-    public String getText(long broadcastId) {
-        RebroadcastBroadcastWriter writer = findWriter(broadcastId);
-        return writer != null ? writer.getText() : null;
-    }
+
     public static RebroadcastBroadcastManager getInstance() {
         return InstanceHolder.VALUE;
     }
@@ -40,6 +37,12 @@ public class RebroadcastBroadcastManager extends ResourceWriterManager<Rebroadca
         RebroadcastBroadcastWriter writer = findWriter(broadcastId);
         return writer != null && writer.getText() == null;
     }
+
+    public String getText(long broadcastId) {
+        RebroadcastBroadcastWriter writer = findWriter(broadcastId);
+        return writer != null ? writer.getText() : null;
+    }
+
     private RebroadcastBroadcastWriter findWriter(long broadcastId) {
         for (RebroadcastBroadcastWriter writer : getWriters()) {
             if (writer.getBroadcastId() == broadcastId) {

@@ -6,13 +6,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.douya.R;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import douya.ui.ImageItem;
+import douya.util.FragmentUtils;
 
 public class GalleryActivity extends AppCompatActivity {
     private static final String KEY_PREFIX = GalleryActivity.class.getName() + '.';
@@ -63,6 +62,16 @@ public class GalleryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gallery);
+
+        // Calls ensureSubDecor().
+        findViewById(android.R.id.content);
+
+        if (savedInstanceState == null) {
+            Intent intent = getIntent();
+            ArrayList<Uri> imageList = intent.getParcelableArrayListExtra(EXTRA_IMAGE_LIST);
+            int position = intent.getIntExtra(EXTRA_POSITION, 0);
+            FragmentUtils.add(GalleryFragment.newInstance(imageList, position), this,
+                    android.R.id.content);
+        }
     }
 }

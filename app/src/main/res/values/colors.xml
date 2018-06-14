@@ -64,4 +64,6 @@
     <color name="calendar_secondary_text_dark">#b3ffffff</color>
     <color name="calendar_highlight_text">#00897b</color>
     <color name="calendar_control_activated">#ffab00</color>
+
+    <color name="system_window_scrim">#44000000</color>
 </resources>

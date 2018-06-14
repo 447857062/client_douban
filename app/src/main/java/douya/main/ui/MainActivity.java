@@ -26,7 +26,7 @@ import douya.ui.ActionItemBadge;
 import douya.util.FragmentUtils;
 import douya.util.TransitionUtils;
 
-public class MainActivity extends AppCompatActivity  implements NavigationFragment.Host{
+public class MainActivity extends AppCompatActivity implements NavigationFragment.Host {
 
     private static final String FRAGMENT_TAG_DOUMAIL_UNREAD_COUNT =
             DoumailUnreadCountFragment.class.getName();
@@ -51,12 +51,15 @@ public class MainActivity extends AppCompatActivity  implements NavigationFragme
     private HomeFragment mMainFragment;
 
     private boolean mOpenedDoumail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+
         setTheme(R.style.Theme_Douya_MainActivity);
+
         TransitionUtils.setupTransitionBeforeDecorate(this);
-        if (!AccountUtils.ensureActiveAccountAvailability(this)) {
+        super.onCreate(savedInstanceState);
+       if (!AccountUtils.ensureActiveAccountAvailability(this)) {
             return;
         }
         if (savedInstanceState != null) {
@@ -87,7 +90,8 @@ public class MainActivity extends AppCompatActivity  implements NavigationFragme
 
         outState.putBoolean(STATE_OPENED_DOUMAIL, mOpenedDoumail);
     }
-   @Override
+
+    @Override
     protected void onStart() {
         super.onStart();
 
@@ -96,16 +100,17 @@ public class MainActivity extends AppCompatActivity  implements NavigationFragme
             mOpenedDoumail = false;
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
         getMenuInflater().inflate(R.menu.main, menu);
         mNotificationMenuItem = menu.findItem(R.id.action_notification);
-     ActionItemBadge.setup(mNotificationMenuItem, R.drawable.notifications_icon_white_24dp,
+        ActionItemBadge.setup(mNotificationMenuItem, R.drawable.notifications_icon_white_24dp,
                 mNotificationListFragment.getUnreadCount(), this);
         mDoumailMenuItem = menu.findItem(R.id.action_doumail);
-         ActionItemBadge.setup(mDoumailMenuItem, R.drawable.mail_icon_white_24dp,
+        ActionItemBadge.setup(mDoumailMenuItem, R.drawable.mail_icon_white_24dp,
                 mDoumailUnreadCountFragment.getUnreadCount(), this);
         return true;
     }
@@ -122,7 +127,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationFragme
                 return true;
             case R.id.action_doumail:
                 mOpenedDoumail = true;
-               NotImplementedManager.openDoumail(this);
+                NotImplementedManager.openDoumail(this);
                 return true;
             case R.id.action_search:
 
@@ -132,6 +137,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationFragme
                 return super.onOptionsItemSelected(item);
         }
     }
+
     @Override
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(mNavigationFragment.getView())) {
@@ -142,16 +148,19 @@ public class MainActivity extends AppCompatActivity  implements NavigationFragme
             super.onBackPressed();
         }
     }
+
     @Override
     public void setSupportActionBar(@Nullable Toolbar toolbar) {
         super.setSupportActionBar(toolbar);
 
-        TransitionUtils.setupTransitionForAppBar((Activity)this);
+        TransitionUtils.setupTransitionForAppBar((Activity) this);
     }
+
     @Override
     public DrawerLayout getDrawer() {
         return mDrawerLayout;
     }
+
     @Override
     public void reloadForActiveAccountChange() {
         if (mMainFragment != null) {
@@ -188,6 +197,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationFragme
             ActionItemBadge.update(mDoumailMenuItem, count);
         }
     }
+
     public void onRefresh() {
         mNotificationListFragment.refresh();
         mDoumailUnreadCountFragment.refresh();

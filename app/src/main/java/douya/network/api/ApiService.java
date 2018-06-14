@@ -81,6 +81,21 @@ public class ApiService {
     public static ApiService getInstance() {
         return sInstance;
     }
+    public ApiRequest<UserItemList> getUserItemList(String userIdOrUid) {
+        // TODO: UserIdOrUidFrodoRequest
+        return mFrodoService.getUserItemList(userIdOrUid);
+    }
+    public ApiRequest<User> follow(String userIdOrUid, boolean follow) {
+        if (follow) {
+            return mLifeStreamService.follow(userIdOrUid);
+        } else {
+            return mLifeStreamService.unfollow(userIdOrUid);
+        }
+    }
+    public ApiRequest<DiaryList> getDiaryList(String userIdOrUid, Integer start, Integer count) {
+        // TODO: UserIdOrUidFrodoRequest
+        return mFrodoService.getDiaryList(userIdOrUid, start, count);
+    }
     public ApiRequest<ItemCollection> collectItem(CollectableItem.Type itemType, long itemId,
                                                   ItemCollectionState state, int rating,
                                                   List<String> tags, String comment,

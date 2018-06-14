@@ -5,10 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.douya.R;
-
 import douya.network.api.info.apiv2.SimpleUser;
-import douya.network.api.info.frodo.User;
+import douya.network.api.info.apiv2.User;
+import douya.util.FragmentUtils;
 
 public class ProfileActivity extends AppCompatActivity {
     private static final String KEY_PREFIX = ProfileFragment.class.getName() + '.';
@@ -43,6 +42,31 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        overridePendingTransition(0, 0);
+
+        // Calls ensureSubDecor().
+        findViewById(android.R.id.content);
+
+        if (savedInstanceState == null) {
+            Intent intent = getIntent();
+            String userIdOrUid = intent.getStringExtra(EXTRA_USER_ID_OR_UID);
+            SimpleUser simpleUser = intent.getParcelableExtra(EXTRA_SIMPLE_USER);
+            User user = intent.getParcelableExtra(EXTRA_USER_INFO);
+            mFragment = ProfileFragment.newInstance(userIdOrUid, simpleUser, user);
+            FragmentUtils.add(mFragment, this, android.R.id.content);
+        } else {
+            mFragment = FragmentUtils.findById(this, android.R.id.content);
+        }
+    }
+    @Override
+    public void onBackPressed() {
+        mFragment.onBackPressed();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+
+        overridePendingTransition(0, 0);
     }
 }

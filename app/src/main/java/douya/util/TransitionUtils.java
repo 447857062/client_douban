@@ -8,6 +8,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
+import android.transition.Explode;
+import android.transition.Transition;
 import android.view.View;
 import android.view.Window;
 
@@ -22,6 +24,34 @@ import java.util.ArrayList;
 
 public class TransitionUtils {
     private static final String TRANSITION_NAME_APPBAR = "appbar";
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public static void postAfterTransition(Fragment fragment, Runnable runnable) {
+
+        if (!shouldEnableTransition()) {
+            runnable.run();
+            return;
+        }
+
+        // HACK: Horrible hack, because we have no good way of being notified at the end of
+        // transition.
+        Activity activity = fragment.getActivity();
+        activity.getWindow().getDecorView().postDelayed(runnable,
+                ViewUtils.getMediumAnimTime(activity));
+    }
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public static void setEnterReturnExplode(Fragment fragment) {
+
+        if (!shouldEnableTransition()) {
+            return;
+        }
+
+        Window window = fragment.getActivity().getWindow();
+        Transition explode = new Explode()
+                .excludeTarget(android.R.id.statusBarBackground, true)
+                .excludeTarget(android.R.id.navigationBarBackground, true);
+        window.setEnterTransition(explode);
+        window.setReturnTransition(explode);
+    }
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void setupTransitionOnActivityCreated(Fragment fragment) {
 

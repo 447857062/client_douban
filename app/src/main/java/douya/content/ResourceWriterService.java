@@ -18,6 +18,12 @@ import douya.broadcast.content.DeleteBroadcastCommentManager;
 import douya.broadcast.content.DeleteBroadcastManager;
 import douya.broadcast.content.LikeBroadcastManager;
 import douya.broadcast.content.RebroadcastBroadcastManager;
+import douya.broadcast.content.SendBroadcastCommentManager;
+import douya.broadcast.content.SendBroadcastManager;
+import douya.followship.content.FollowUserManager;
+import douya.item.content.CollectItemManager;
+import douya.item.content.UncollectItemManager;
+import douya.item.content.VoteItemCollectionManager;
 
 public class ResourceWriterService extends Service {
 
@@ -31,16 +37,16 @@ public class ResourceWriterService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        //addWriterManager(FollowUserManager.getInstance());
-        //addWriterManager(SendBroadcastManager.getInstance());
+        addWriterManager(FollowUserManager.getInstance());
+        addWriterManager(SendBroadcastManager.getInstance());
         addWriterManager(LikeBroadcastManager.getInstance());
         addWriterManager(RebroadcastBroadcastManager.getInstance());
         addWriterManager(DeleteBroadcastManager.getInstance());
         addWriterManager(DeleteBroadcastCommentManager.getInstance());
-       // addWriterManager(SendBroadcastCommentManager.getInstance());
-       // addWriterManager(CollectItemManager.getInstance());
-        //addWriterManager(UncollectItemManager.getInstance());
-        //addWriterManager(VoteItemCollectionManager.getInstance());
+        addWriterManager(SendBroadcastCommentManager.getInstance());
+        addWriterManager(CollectItemManager.getInstance());
+        addWriterManager(UncollectItemManager.getInstance());
+        addWriterManager(VoteItemCollectionManager.getInstance());
     }
 
     private void addWriterManager(ResourceWriterManager writerManager) {

@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
 
-package douya.network.api;
+package douya.network;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -16,9 +16,6 @@ import android.support.annotation.Nullable;
 import java.io.IOException;
 
 import douya.account.util.AccountUtils;
-import douya.network.AuthenticationException;
-import douya.network.AuthenticationInterceptor;
-import douya.network.Http;
 import okhttp3.Request;
 import okhttp3.Response;
 

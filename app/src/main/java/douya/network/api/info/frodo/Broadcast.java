@@ -21,6 +21,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
+import douya.network.api.info.ClipboardCopyable;
+import douya.network.api.info.UrlGettable;
 import douya.ui.IconSpan;
 import douya.ui.SpaceSpan;
 import douya.ui.UriSpan;
@@ -32,7 +34,7 @@ import douya.util.ViewUtils;
  * Created by ${kelijun} on 2018/6/5.
  */
 
-public class Broadcast implements Parcelable {
+public class Broadcast implements ClipboardCopyable, UrlGettable, Parcelable {
     public static final int MAX_TEXT_LENGTH = 140;
 
     public static final int MAX_IMAGES_SIZE = 9;
@@ -116,6 +118,10 @@ public class Broadcast implements Parcelable {
         return !TextUtils.isEmpty(text) ? getTextWithEntities(false, context) : context.getString(
                 R.string.broadcast_rebroadcasted_broadcasts_simple_rebroadcast_text);
     }
+    public boolean canComment() {
+        // TODO: Frodo
+        return !isRebroadcastAndCommentForbidden;
+    }
     // The broadcast for user actions.
     public Broadcast getEffectiveBroadcast() {
         if (isSimpleRebroadcast()) {
@@ -163,6 +169,23 @@ public class Broadcast implements Parcelable {
     public boolean isSimpleRebroadcast() {
         return rebroadcastedBroadcast != null && TextUtils.isEmpty(text);
     }
+
+    @Override
+    public String getUrl() {
+        //noinspection deprecation
+        return DoubanUtils.makeBroadcastUrl(author.getUidOrId(), id);
+    }
+
+    @Override
+    public String getClipboardLabel(Context context) {
+        return author.name;
+    }
+
+    @Override
+    public String getClipboardText(Context context) {
+        return getTextWithEntities(context).toString();
+    }
+
     public static class Deserializer implements JsonDeserializer<Broadcast> {
 
         @Override

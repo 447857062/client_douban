@@ -8,14 +8,17 @@ import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.util.ObjectsCompat;
 import android.support.v4.view.MarginLayoutParamsCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.content.res.AppCompatResources;
+import android.support.v7.view.ContextThemeWrapper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
@@ -39,6 +42,53 @@ import douya.ui.ClickableMovementMethod;
 public class ViewUtils {
 
     private ViewUtils() {}
+    public static void crossfade(View fromView, View toView, int duration, boolean gone) {
+        fadeOut(fromView, duration, gone);
+        fadeIn(toView, duration);
+    }
+
+    public static void crossfade(View fromView, View toView, boolean gone) {
+        crossfade(fromView, toView, getShortAnimTime(fromView), gone);
+    }
+
+    public static void crossfade(View fromView, View toView) {
+        crossfade(fromView, toView, false);
+    }
+    public static View inflateWithTheme(int resource, ViewGroup parent, int themeRes) {
+        return inflate(resource, parent, false, new ContextThemeWrapper(parent.getContext(),
+                themeRes));
+    }
+    public static Drawable getDrawableFromAttrRes(int attrRes, Context context) {
+        // TODO: Switch to TintTypedArray when they added this overload.
+        TypedArray a = context.obtainStyledAttributes(new int[] { attrRes });
+        try {
+            // 0 is an invalid identifier according to the docs of {@link Resources}.
+            int resId = a.getResourceId(0, 0);
+            if (resId != 0) {
+                return AppCompatResources.getDrawable(context, resId);
+            }
+            return null;
+        } finally {
+            a.recycle();
+        }
+    }
+    public static void setBackgroundPreservingPadding(View view, Drawable background) {
+        int savedPaddingStart = ViewCompat.getPaddingStart(view);
+        int savedPaddingEnd = ViewCompat.getPaddingEnd(view);
+        int savedPaddingTop = view.getPaddingTop();
+        int savedPaddingBottom = view.getPaddingBottom();
+        ViewCompat.setBackground(view, background);
+        ViewCompat.setPaddingRelative(view, savedPaddingStart, savedPaddingTop, savedPaddingEnd,
+                savedPaddingBottom);
+    }
+    public static void setHeight(View view, int height) {
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        if (layoutParams.height == height) {
+            return;
+        }
+        layoutParams.height = height;
+        view.setLayoutParams(layoutParams);
+    }
     public static boolean isInPortait(Context context) {
         return context.getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_PORTRAIT;
